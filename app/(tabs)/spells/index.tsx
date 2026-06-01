@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { fetchAllSpells } from '../../src/features/spells/api/spellApi';
+import { initializeSpells } from '../../src/features/spells/services/spellSyncService';
 
 export default function SpellsScreen() {
-  const [status, setStatus] = useState('Loading...');
+  const [status, setStatus] = useState('Initializing...');
 
   useEffect(() => {
-    fetchAllSpells()
-      .then(spells => setStatus(`Success — ${spells.length} spells loaded`))
+    initializeSpells()
+      .then(spells => setStatus(`Loaded ${spells.length} spells from ${spells[0]?.source ?? 'unknown'}`))
       .catch(err => setStatus(`Error: ${err.message}`));
   }, []);
 
