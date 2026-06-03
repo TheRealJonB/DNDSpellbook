@@ -20,9 +20,7 @@ export default function SpellDetailScreen() {
 
   const schoolColor = colors.school[spell.school] ?? colors.accentLight;
 
-  const levelLabel = spell.level === 0
-    ? `${spell.school} Cantrip`
-    : `Level ${spell.level} ${spell.school}`;
+  const levelLabel = spell.level === 0 ? `${spell.school} Cantrip` : `Level ${spell.level} ${spell.school}`;
 
   return (
     <View style={styles.container}>
