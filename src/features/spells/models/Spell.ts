@@ -5,6 +5,7 @@ export interface Spell {
   school: string;
   classes: string[];
   castingTime: string;
+  castingTimeAbbr: string;
   range: string;
   components: string;
   duration: string;
@@ -19,4 +20,5 @@ export interface Spell {
   savingThrowArray: string[];
   aoeShapeArray: string[];
   isSpellAttack: boolean;
+  isRitual: boolean;
 }
