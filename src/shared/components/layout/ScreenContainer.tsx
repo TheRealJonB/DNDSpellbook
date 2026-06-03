@@ -9,7 +9,7 @@ interface Props {
 
 export default function ScreenContainer({ children, style }: Props) {
   return (
-    <SafeAreaView style={[styles.container, style]}>
+    <SafeAreaView style={[styles.container, style]} edges={['top']}>
       {children}
     </SafeAreaView>
   );

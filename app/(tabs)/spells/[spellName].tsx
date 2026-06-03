@@ -1,9 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getSpellByName } from '../../../src/features/spells/services/spellService';
+import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
+
 
 export default function SpellDetailScreen() {
   const { spellName } = useLocalSearchParams<{ spellName: string }>();
@@ -23,71 +25,73 @@ export default function SpellDetailScreen() {
   const levelLabel = spell.level === 0 ? `${spell.school} Cantrip` : `Level ${spell.level} ${spell.school}`;
 
   return (
-    <View style={styles.container}>
+    <ScreenContainer>
+      <View style={styles.container}>
 
-      {/* header */}
-      <View style={[styles.header, { borderBottomColor: schoolColor }]}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
-        </Pressable>
-        <Text style={styles.name}>{spell.name}</Text>
-        <Text style={[styles.levelLabel, { color: schoolColor }]}>{levelLabel}</Text>
-        <Text style={styles.source}>{spell.source}</Text>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-
-        {/* stat block */}
-        <View style={styles.statBlock}>
-          <StatRow label="Casting Time" value={spell.castingTime} />
-          <StatRow label="Range" value={spell.range} />
-          <StatRow label="Components" value={spell.components} />
-          <StatRow label="Duration" value={spell.duration} />
+        {/* header */}
+        <View style={[styles.header, { borderBottomColor: schoolColor }]}>
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <Text style={styles.backText}>← Back</Text>
+          </Pressable>
+          <Text style={styles.name}>{spell.name}</Text>
+          <Text style={[styles.levelLabel, { color: schoolColor }]}>{levelLabel}</Text>
+          <Text style={styles.source}>{spell.source}</Text>
         </View>
 
-        {/* tags row */}
-        <View style={styles.tagsRow}>
-          {spell.hasVerbal && <Tag label="Verbal" />}
-          {spell.hasSomatic && <Tag label="Somatic" />}
-          {spell.hasMaterial && <Tag label="Material" />}
-          {spell.hasMaterial && spell.materialCostContainsGP && <Tag label="GP Cost" />}
-          {spell.hasMaterial && spell.materialIsConsumed && <Tag label="Consumed" />}
-          {spell.isSpellAttack && <Tag label="Spell Attack" />}
-          {spell.savingThrowArray.map(save => (
-            <Tag key={save} label={`${save} Save`} />
-          ))}
-          {spell.aoeShapeArray.map(shape => (
-            <Tag key={shape} label={shape} />
-          ))}
-          {spell.damageTypeArray.map(damage => (
-            <Tag key={damage} label={damage} />
-          ))}
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
 
-        {/* classes */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Classes</Text>
-          <Text style={styles.classesText}>{spell.classes.join(', ')}</Text>
-        </View>
-
-        {/* description */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.descriptionText}>{spell.description}</Text>
-        </View>
-
-        {/* upgrade */}
-        {spell.upgrade && (
-          <View style={styles.upgradeBlock}>
-            <Text style={styles.upgradeText}>{spell.upgrade}</Text>
+          {/* stat block */}
+          <View style={styles.statBlock}>
+            <StatRow label="Casting Time" value={spell.castingTime} />
+            <StatRow label="Range" value={spell.range} />
+            <StatRow label="Components" value={spell.components} />
+            <StatRow label="Duration" value={spell.duration} />
           </View>
-        )}
 
-      </ScrollView>
-    </View>
+          {/* tags row */}
+          <View style={styles.tagsRow}>
+            {spell.hasVerbal && <Tag label="Verbal" />}
+            {spell.hasSomatic && <Tag label="Somatic" />}
+            {spell.hasMaterial && <Tag label="Material" />}
+            {spell.hasMaterial && spell.materialCostContainsGP && <Tag label="GP Cost" />}
+            {spell.hasMaterial && spell.materialIsConsumed && <Tag label="Consumed" />}
+            {spell.isSpellAttack && <Tag label="Spell Attack" />}
+            {spell.savingThrowArray.map(save => (
+              <Tag key={save} label={`${save} Save`} />
+            ))}
+            {spell.aoeShapeArray.map(shape => (
+              <Tag key={shape} label={shape} />
+            ))}
+            {spell.damageTypeArray.map(damage => (
+              <Tag key={damage} label={damage} />
+            ))}
+          </View>
+
+          {/* classes */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Classes</Text>
+            <Text style={styles.classesText}>{spell.classes.join(', ')}</Text>
+          </View>
+
+          {/* description */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Description</Text>
+            <Text style={styles.descriptionText}>{spell.description}</Text>
+          </View>
+
+          {/* upgrade */}
+          {spell.upgrade && (
+            <View style={styles.upgradeBlock}>
+              <Text style={styles.upgradeText}>{spell.upgrade}</Text>
+            </View>
+          )}
+
+        </ScrollView>
+      </View>
+    </ScreenContainer>
   );
 }
 
@@ -139,7 +143,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
   },
   levelLabel: {
     fontSize: typography.sizes.sm,
