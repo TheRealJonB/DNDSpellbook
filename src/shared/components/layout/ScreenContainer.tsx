@@ -1,4 +1,5 @@
-import { SafeAreaView, StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../../theme/colors';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 
 export default function ScreenContainer({ children, style }: Props) {
   return (
-    <SafeAreaView style={[styles.container, style]}>
+    <SafeAreaView style={[styles.container, style]} edges={['top']}>
       {children}
     </SafeAreaView>
   );

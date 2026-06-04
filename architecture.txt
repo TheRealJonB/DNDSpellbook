@@ -1,95 +1,82 @@
-my-app/
+DNDSpellbook/
 ├── app/
 │   ├── _layout.tsx
 │   └── (tabs)/
 │       ├── _layout.tsx
-│       ├── spells/
-│       │   ├── _layout.tsx
-│       │   ├── index.tsx
-│       │   ├── filters.tsx
-│       │   └── [spellName].tsx
 │       ├── characters/
 │       │   ├── _layout.tsx
-│       │   ├── index.tsx
+│       │   ├── [characterId].tsx
 │       │   ├── create.tsx
-│       │   └── [characterId].tsx
+│       │   └── index.tsx
 │       ├── search/
 │       │   ├── _layout.tsx
 │       │   └── index.tsx
-│       └── settings/
+│       ├── settings/
+│       │   ├── _layout.tsx
+│       │   └── index.tsx
+│       └── spells/
 │           ├── _layout.tsx
+│           ├── [spellName].tsx
+│           ├── filters.tsx
 │           └── index.tsx
-│
-├── src/
-│   ├── features/
-│   │   ├── spells/
-│   │   │   ├── api/
-│   │   │   │   └── spellApi.ts
-│   │   │   ├── components/
-│   │   │   │   ├── SpellCard.tsx
-│   │   │   │   ├── SpellLevelSection.tsx
-│   │   │   │   ├── SpellSearchBar.tsx
-│   │   │   │   └── SpellFilterScreen.tsx
-│   │   │   ├── constants/
-│   │   │   │   └── filterOptions.ts
-│   │   │   ├── models/
-│   │   │   │   └── Spell.ts
-│   │   │   ├── services/
-│   │   │   │   ├── spellSyncService.ts
-│   │   │   │   ├── spellSearchService.ts
-│   │   │   │   └── spellFilterService.ts
-│   │   │   ├── storage/
-│   │   │   │   └── spellStorage.ts
-│   │   │   ├── store/
-│   │   │   │   ├── spellStore.ts
-│   │   │   │   └── filterStore.ts
-│   │   │   ├── utils/
-│   │   │   │   ├── spellGrouping.ts
-│   │   │   │   ├── spellFormatting.ts
-│   │   │   │   └── spellValidation.ts
-│   │   │   └── hooks/
-│   │   │       ├── useFilteredSpells.ts
-│   │   │       └── useSpellSync.ts
-│   │   └── characters/
-│   │       ├── components/
-│   │       ├── models/
-│   │       ├── services/
-│   │       ├── storage/
-│   │       ├── store/
-│   │       └── hooks/
-│   │
-│   └── shared/
-│       ├── api/
-│       │   └── apiClient.ts
-│       ├── components/
-│       │   ├── ui/
-│       │   │   ├── Chip.tsx
-│       │   │   ├── EmptyState.tsx
-│       │   │   ├── LoadingSpinner.tsx
-│       │   │   ├── SearchBar.tsx
-│       │   │   └── SectionHeader.tsx
-│       │   └── layout/
-│       │       ├── ScreenContainer.tsx
-│       │       └── PageHeader.tsx
-│       ├── hooks/
-│       │   └── useDebounce.ts
-│       ├── storage/
-│       │   └── storageClient.ts
-│       ├── theme/
-│       │   ├── colors.ts
-│       │   ├── spacing.ts
-│       │   ├── typography.ts
-│       │   └── shadows.ts
-│       ├── types/
-│       │   └── common.ts
-│       └── utils/
-│           ├── formatters.ts
-│           └── arrayUtils.ts
-│
 ├── assets/
 │   ├── fonts/
 │   ├── icons/
 │   └── images/
+├── src/
+│   ├── features/
+│   │   ├── characters/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── models/
+│   │   │   ├── services/
+│   │   │   ├── storage/
+│   │   │   └── store/
+│   │   └── spells/
+│   │       ├── components/
+│   │       │   ├── SpellCard.tsx
+│   │       │   ├── SpellFilterScreen.tsx
+│   │       │   ├── SpellLevelSection.tsx
+│   │       │   └── SpellSearchBar.tsx
+│   │       ├── constants/
+│   │       │   └── filterOptions.ts
+│   │       ├── data/
+│   │       │   └── spells.json
+│   │       ├── hooks/
+│   │       │   └── useFilteredSpells.ts
+│   │       ├── models/
+│   │       │   └── Spell.ts
+│   │       ├── services/
+│   │       │   ├── spellFilterService.ts
+│   │       │   ├── spellSearchService.ts
+│   │       │   └── spellService.ts
+│   │       └── utils/
+│   │           ├── spellFormatting.ts
+│   │           ├── spellGrouping.ts
+│   │           └── spellValidation.ts
+│   └── shared/
+│       ├── components/
+│       │   ├── layout/
+│       │   │   ├── PageHeader.tsx
+│       │   │   └── ScreenContainer.tsx
+│       │   └── ui/
+│       │       ├── Chip.tsx
+│       │       ├── EmptyState.tsx
+│       │       ├── LoadingSpinner.tsx
+│       │       ├── SearchBar.tsx
+│       │       └── SectionHeader.tsx
+│       ├── hooks/
+│       │   └── useDebounce.ts
+│       ├── theme/
+│       │   ├── colors.ts
+│       │   ├── shadows.ts
+│       │   ├── spacing.ts
+│       │   └── typography.ts
+│       ├── types/
+│       │   └── common.ts
+│       └── utils/
+│           ├── arrayUtils.ts
+│           └── formatters.ts
 ├── app.json
 ├── babel.config.js
 ├── package.json

@@ -37,7 +37,7 @@ export default function SpellCard({ onPress, spell }: Props) {
           )}
         </View>
       </View>
-      <Text style={styles.castingTime}>{spell.castingTime}</Text>
+      <Text style={styles.castingTime}>{spell.castingTimeAbbr}</Text>
     </Pressable>
   );
 }
