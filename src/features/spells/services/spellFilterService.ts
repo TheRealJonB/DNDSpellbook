@@ -50,8 +50,8 @@ export function applyFilters(spells: Spell[], filters: FilterState): Spell[] {
     if (filters.hasMaterial !== null && spell.hasMaterial !== filters.hasMaterial) return false;
     if (filters.materialCostContainsGP !== null && spell.materialCostContainsGP !== filters.materialCostContainsGP) return false;
     if (filters.materialIsConsumed !== null && spell.materialIsConsumed !== filters.materialIsConsumed) return false;
-    if (filters.isSpellAttack !== null && spell.isSpellAttack !== filters.isSpellAttack) return false;
-    if (filters.isRitual !== null && spell.isRitual !== filters.isRitual) return false;
+    if (filters.spellAttack !== null && spell.spellAttack !== filters.spellAttack) return false;
+    if (filters.ritual !== null && spell.ritual !== filters.ritual) return false;
 
     return true;
   });

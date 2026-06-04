@@ -21,7 +21,7 @@ export default function SpellCard({ onPress, spell }: Props) {
       <View style={styles.content}>
         <Text style={styles.name}>{spell.name}</Text>
         <View style={styles.tags}>
-          {spell.isSpellAttack && (
+          {spell.spellAttack && (
             <Text style={styles.tag}>Attack</Text>
           )}
           {spell.savingThrowArray.length > 0 && (

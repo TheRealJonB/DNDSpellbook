@@ -58,7 +58,7 @@ export default function SpellDetailScreen() {
             {spell.hasMaterial && <Tag label="Material" />}
             {spell.hasMaterial && spell.materialCostContainsGP && <Tag label="GP Cost" />}
             {spell.hasMaterial && spell.materialIsConsumed && <Tag label="Consumed" />}
-            {spell.isSpellAttack && <Tag label="Spell Attack" />}
+            {spell.spellAttack && <Tag label="Spell Attack" />}
             {spell.savingThrowArray.map(save => (
               <Tag key={save} label={`${save} Save`} />
             ))}

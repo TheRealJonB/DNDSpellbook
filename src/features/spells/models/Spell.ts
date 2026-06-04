@@ -19,6 +19,6 @@ export interface Spell {
   damageTypeArray: string[];
   savingThrowArray: string[];
   aoeShapeArray: string[];
-  isSpellAttack: boolean;
-  isRitual: boolean;
+  spellAttack: boolean;
+  ritual: boolean;
 }

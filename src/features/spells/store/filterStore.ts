@@ -12,8 +12,8 @@ export interface FilterState {
   hasMaterial: boolean | null;
   materialCostContainsGP: boolean | null;
   materialIsConsumed: boolean | null;
-  isSpellAttack: boolean | null;
-  isRitual: boolean | null;
+  spellAttack: boolean | null;
+  ritual: boolean | null;
 }
 
 export const EMPTY_FILTERS: FilterState = {
@@ -30,8 +30,8 @@ export const EMPTY_FILTERS: FilterState = {
   hasMaterial: null,
   materialCostContainsGP: null,
   materialIsConsumed: null,
-  isSpellAttack: null,
-  isRitual: null,
+  spellAttack: null,
+  ritual: null,
 };
 
 export function isFilterActive(filters: FilterState): boolean {
@@ -49,7 +49,7 @@ export function isFilterActive(filters: FilterState): boolean {
     filters.hasMaterial !== null ||
     filters.materialCostContainsGP !== null ||
     filters.materialIsConsumed !== null ||
-    filters.isSpellAttack !== null ||
-    filters.isRitual !== null
+    filters.spellAttack !== null ||
+    filters.ritual !== null
   );
 }

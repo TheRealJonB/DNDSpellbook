@@ -3,12 +3,12 @@ import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
 import {
-    AOE_SHAPES, CASTING_TIMES,
-    DAMAGE_TYPES,
-    DURATIONS,
-    SAVING_THROWS,
-    SPELL_CLASSES,
-    SPELL_LEVELS, SPELL_SCHOOLS
+  AOE_SHAPES, CASTING_TIMES,
+  DAMAGE_TYPES,
+  DURATIONS,
+  SAVING_THROWS,
+  SPELL_CLASSES,
+  SPELL_LEVELS, SPELL_SCHOOLS
 } from '../constants/filterOptions';
 import { EMPTY_FILTERS, FilterState } from '../store/filterStore';
 
@@ -226,8 +226,8 @@ export default function SpellFilterScreen({ filters, onFiltersChange, onClose, r
         {/* special */}
         <FilterSection title="Special">
           <View style={styles.chipRow}>
-            <BooleanChip label="Spell Attack" value={filters.isSpellAttack} onPress={() => onFiltersChange({ ...filters, isSpellAttack: toggleBoolean(filters.isSpellAttack) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="Ritual" value={filters.isRitual} onPress={() => onFiltersChange({ ...filters, isRitual: toggleBoolean(filters.isRitual) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Spell Attack" value={filters.spellAttack} onPress={() => onFiltersChange({ ...filters, spellAttack: toggleBoolean(filters.spellAttack) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Ritual" value={filters.ritual} onPress={() => onFiltersChange({ ...filters, ritual: toggleBoolean(filters.ritual) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
           </View>
         </FilterSection>
 
