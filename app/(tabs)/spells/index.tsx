@@ -1,11 +1,12 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import SpellLevelSection from '../../../src/features/spells/components/SpellLevelSection';
 import { Spell } from '../../../src/features/spells/models/Spell';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
 import { getAllSpells } from '../../../src/features/spells/services/spellService';
-import { EMPTY_FILTERS, FilterState, isFilterActive } from '../../../src/features/spells/store/filterStore';
+import { useFilters } from '../../../src/features/spells/store/FilterContext';
+import { isFilterActive } from '../../../src/features/spells/store/filterStore';
 import { groupSpellsByLevel, SpellGroup } from '../../../src/features/spells/utils/spellGrouping';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
@@ -17,12 +18,7 @@ const ALL_SPELLS = getAllSpells();
 
 export default function SpellsScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ filters: string }>();
-
-  const filters: FilterState = params.filters
-    ? JSON.parse(params.filters)
-    : EMPTY_FILTERS;
-
+  const { filters } = useFilters();
   const [groups, setGroups] = useState<SpellGroup[]>([]);
   const [filteredCount, setFilteredCount] = useState(ALL_SPELLS.length);
   const filterActive = isFilterActive(filters);
@@ -31,17 +27,14 @@ export default function SpellsScreen() {
     const filtered = applyFilters(ALL_SPELLS, filters);
     setFilteredCount(filtered.length);
     setGroups(groupSpellsByLevel(filtered));
-  }, [params.filters]);
+  }, [filters]);
 
   function handleSpellPress(spell: Spell) {
     router.push(`/spells/${encodeURIComponent(spell.name)}`);
   }
 
   function handleFilterPress() {
-    router.push({
-      pathname: '/spells/filters',
-      params: { filters: JSON.stringify(filters) },
-    });
+    router.push('/spells/filters');
   }
 
   return (

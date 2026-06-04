@@ -1,19 +1,20 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import SpellFilterScreen from '../../../src/features/spells/components/SpellFilterScreen';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
 import { getAllSpells } from '../../../src/features/spells/services/spellService';
+import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { FilterState } from '../../../src/features/spells/store/filterStore';
+
+const ALL_SPELLS = getAllSpells();
 
 export default function FiltersScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ filters: string }>();
-  const filters: FilterState = params.filters ? JSON.parse(params.filters) : {};
+  const { filters, setFilters } = useFilters();
 
-  const allSpells = getAllSpells();
-  const resultCount = applyFilters(allSpells, filters).length;
+  const resultCount = applyFilters(ALL_SPELLS, filters).length;
 
   function handleFiltersChange(newFilters: FilterState) {
-    router.setParams({ filters: JSON.stringify(newFilters) });
+    setFilters(newFilters);
   }
 
   function handleClose() {
