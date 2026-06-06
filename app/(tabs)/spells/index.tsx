@@ -1,15 +1,18 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import SpellLevelSection from '../../../src/features/spells/components/SpellLevelSection';
 import { Spell } from '../../../src/features/spells/models/Spell';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
+import { searchSpells } from '../../../src/features/spells/services/spellSearchService';
 import { getAllSpells } from '../../../src/features/spells/services/spellService';
 import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { isFilterActive } from '../../../src/features/spells/store/filterStore';
 import { groupSpellsByLevel, SpellGroup } from '../../../src/features/spells/utils/spellGrouping';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
+import { useDebounce } from '../../../src/shared/hooks/useDebounce';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
@@ -19,15 +22,16 @@ const ALL_SPELLS = getAllSpells();
 export default function SpellsScreen() {
   const router = useRouter();
   const { filters } = useFilters();
+  const [searchQuery, setSearchQuery] = useState('');
   const [groups, setGroups] = useState<SpellGroup[]>([]);
-  const [filteredCount, setFilteredCount] = useState(ALL_SPELLS.length);
+  const debouncedQuery = useDebounce(searchQuery, 100);
   const filterActive = isFilterActive(filters);
 
   useEffect(() => {
     const filtered = applyFilters(ALL_SPELLS, filters);
-    setFilteredCount(filtered.length);
-    setGroups(groupSpellsByLevel(filtered));
-  }, [filters]);
+    const searched = searchSpells(filtered, debouncedQuery);
+    setGroups(groupSpellsByLevel(searched));
+  }, [filters, debouncedQuery]);
 
   function handleSpellPress(spell: Spell) {
     router.push(`/spells/${encodeURIComponent(spell.name)}`);
@@ -39,30 +43,51 @@ export default function SpellsScreen() {
 
   return (
     <ScreenContainer>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Spells</Text>
-          <Text style={styles.count}>
-            {filteredCount}{filterActive ? ` of ${ALL_SPELLS.length}` : ''} spells
-          </Text>
+      <View style={styles.searchRow}>
+        <View style={styles.searchContainer}>
+          <Ionicons
+            name="search-outline"
+            size={16}
+            color={colors.textMuted}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search spells..."
+            placeholderTextColor={colors.textMuted}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+          />
         </View>
         <Pressable
           onPress={handleFilterPress}
           style={[styles.filterButton, filterActive && styles.filterButtonActive]}
         >
-          <Text style={[styles.filterButtonText, filterActive && styles.filterButtonTextActive]}>
-            Filter{filterActive ? ' •' : ''}
-          </Text>
+          <Ionicons
+            name="options-outline"
+            size={20}
+            color={filterActive ? colors.accentLight : colors.textMuted}
+          />
+          {filterActive && <View style={styles.filterDot} />}
         </Pressable>
       </View>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {groups.length === 0 ? (
           <EmptyState
-            message="No spells match your filters"
-            subMessage="Try adjusting or clearing your filters"
+            message="No spells found"
+            subMessage={
+              searchQuery
+                ? `No results for "${searchQuery}"`
+                : 'Try adjusting your filters'
+            }
           />
         ) : (
           groups.map(group => (
@@ -80,43 +105,57 @@ export default function SpellsScreen() {
 }
 
 const styles = StyleSheet.create({
-  count: {
-    color: colors.textMuted,
-    fontSize: typography.sizes.sm,
-  },
   filterButton: {
+    alignItems: 'center',
     borderColor: colors.borderLight,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 0.5,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
   },
   filterButtonActive: {
     backgroundColor: colors.chipSelected,
     borderColor: colors.chipSelectedBorder,
   },
-  filterButtonText: {
-    color: colors.textMuted,
-    fontSize: typography.sizes.sm,
-  },
-  filterButtonTextActive: {
-    color: colors.accentLight,
-  },
-  header: {
-    alignItems: 'center',
-    borderBottomColor: colors.border,
-    borderBottomWidth: 0.5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+  filterDot: {
+    backgroundColor: colors.accentLight,
+    borderRadius: 3,
+    bottom: 6,
+    height: 6,
+    position: 'absolute',
+    right: 6,
+    width: 6,
   },
   scrollContent: {
     paddingBottom: spacing.xxl,
   },
-  title: {
+  searchContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.borderLight,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    flex: 1,
+    flexDirection: 'row',
+    height: 40,
+    paddingHorizontal: spacing.sm,
+  },
+  searchIcon: {
+    marginRight: spacing.xs,
+  },
+  searchInput: {
     color: colors.textPrimary,
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.bold,
+    flex: 1,
+    fontSize: typography.sizes.md,
+  },
+  searchRow: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 0.5,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
 });

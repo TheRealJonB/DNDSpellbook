@@ -7,13 +7,13 @@ export interface FilterState {
   aoeShapes: string[];
   castingTimes: string[];
   durations: string[];
-  hasVerbal: boolean | null;
-  hasSomatic: boolean | null;
-  hasMaterial: boolean | null;
-  materialCostContainsGP: boolean | null;
-  materialIsConsumed: boolean | null;
-  isSpellAttack: boolean | null;
-  isRitual: boolean | null;
+  componentVerbal: boolean | null;
+  componentSomatic: boolean | null;
+  componentMaterial: boolean | null;
+  componentGoldRequired: boolean | null;
+  componentGoldConsumed: boolean | null;
+  spellAttack: boolean | null;
+  ritual: boolean | null;
 }
 
 export const EMPTY_FILTERS: FilterState = {
@@ -25,13 +25,13 @@ export const EMPTY_FILTERS: FilterState = {
   aoeShapes: [],
   castingTimes: [],
   durations: [],
-  hasVerbal: null,
-  hasSomatic: null,
-  hasMaterial: null,
-  materialCostContainsGP: null,
-  materialIsConsumed: null,
-  isSpellAttack: null,
-  isRitual: null,
+  componentVerbal: null,
+  componentSomatic: null,
+  componentMaterial: null,
+  componentGoldRequired: null,
+  componentGoldConsumed: null,
+  spellAttack: null,
+  ritual: null,
 };
 
 export function isFilterActive(filters: FilterState): boolean {
@@ -44,12 +44,12 @@ export function isFilterActive(filters: FilterState): boolean {
     filters.aoeShapes.length > 0 ||
     filters.castingTimes.length > 0 ||
     filters.durations.length > 0 ||
-    filters.hasVerbal !== null ||
-    filters.hasSomatic !== null ||
-    filters.hasMaterial !== null ||
-    filters.materialCostContainsGP !== null ||
-    filters.materialIsConsumed !== null ||
-    filters.isSpellAttack !== null ||
-    filters.isRitual !== null
+    filters.componentVerbal !== null ||
+    filters.componentSomatic !== null ||
+    filters.componentMaterial !== null ||
+    filters.componentGoldRequired !== null ||
+    filters.componentGoldConsumed !== null ||
+    filters.spellAttack !== null ||
+    filters.ritual !== null
   );
 }

@@ -3,12 +3,12 @@ import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
 import {
-    AOE_SHAPES, CASTING_TIMES,
-    DAMAGE_TYPES,
-    DURATIONS,
-    SAVING_THROWS,
-    SPELL_CLASSES,
-    SPELL_LEVELS, SPELL_SCHOOLS
+  AOE_SHAPES, CASTING_TIMES,
+  DAMAGE_TYPES,
+  DURATIONS,
+  SAVING_THROWS,
+  SPELL_CLASSES,
+  SPELL_LEVELS, SPELL_SCHOOLS
 } from '../constants/filterOptions';
 import { EMPTY_FILTERS, FilterState } from '../store/filterStore';
 
@@ -215,19 +215,19 @@ export default function SpellFilterScreen({ filters, onFiltersChange, onClose, r
         {/* components */}
         <FilterSection title="Components">
           <View style={styles.chipRow}>
-            <BooleanChip label="Verbal" value={filters.hasVerbal} onPress={() => onFiltersChange({ ...filters, hasVerbal: toggleBoolean(filters.hasVerbal) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="Somatic" value={filters.hasSomatic} onPress={() => onFiltersChange({ ...filters, hasSomatic: toggleBoolean(filters.hasSomatic) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="Material" value={filters.hasMaterial} onPress={() => onFiltersChange({ ...filters, hasMaterial: toggleBoolean(filters.hasMaterial) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="GP Cost" value={filters.materialCostContainsGP} onPress={() => onFiltersChange({ ...filters, materialCostContainsGP: toggleBoolean(filters.materialCostContainsGP) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="Consumed" value={filters.materialIsConsumed} onPress={() => onFiltersChange({ ...filters, materialIsConsumed: toggleBoolean(filters.materialIsConsumed) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Verbal" value={filters.componentVerbal} onPress={() => onFiltersChange({ ...filters, componentVerbal: toggleBoolean(filters.componentVerbal) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Somatic" value={filters.componentSomatic} onPress={() => onFiltersChange({ ...filters, componentSomatic: toggleBoolean(filters.componentSomatic) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Material" value={filters.componentMaterial} onPress={() => onFiltersChange({ ...filters, componentMaterial: toggleBoolean(filters.componentMaterial) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="GP Cost" value={filters.componentGoldRequired} onPress={() => onFiltersChange({ ...filters, componentGoldRequired: toggleBoolean(filters.componentGoldRequired) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Consumed" value={filters.componentGoldConsumed} onPress={() => onFiltersChange({ ...filters, componentGoldConsumed: toggleBoolean(filters.componentGoldConsumed) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
           </View>
         </FilterSection>
 
         {/* special */}
         <FilterSection title="Special">
           <View style={styles.chipRow}>
-            <BooleanChip label="Spell Attack" value={filters.isSpellAttack} onPress={() => onFiltersChange({ ...filters, isSpellAttack: toggleBoolean(filters.isSpellAttack) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
-            <BooleanChip label="Ritual" value={filters.isRitual} onPress={() => onFiltersChange({ ...filters, isRitual: toggleBoolean(filters.isRitual) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Spell Attack" value={filters.spellAttack} onPress={() => onFiltersChange({ ...filters, spellAttack: toggleBoolean(filters.spellAttack) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
+            <BooleanChip label="Ritual" value={filters.ritual} onPress={() => onFiltersChange({ ...filters, ritual: toggleBoolean(filters.ritual) })} booleanLabel={booleanLabel} booleanStyle={booleanStyle} booleanTextStyle={booleanTextStyle} />
           </View>
         </FilterSection>
 

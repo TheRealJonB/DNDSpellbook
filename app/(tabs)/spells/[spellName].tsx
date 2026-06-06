@@ -53,12 +53,12 @@ export default function SpellDetailScreen() {
 
           {/* tags row */}
           <View style={styles.tagsRow}>
-            {spell.hasVerbal && <Tag label="Verbal" />}
-            {spell.hasSomatic && <Tag label="Somatic" />}
-            {spell.hasMaterial && <Tag label="Material" />}
-            {spell.hasMaterial && spell.materialCostContainsGP && <Tag label="GP Cost" />}
-            {spell.hasMaterial && spell.materialIsConsumed && <Tag label="Consumed" />}
-            {spell.isSpellAttack && <Tag label="Spell Attack" />}
+            {spell.componentVerbal && <Tag label="Verbal" />}
+            {spell.componentSomatic && <Tag label="Somatic" />}
+            {spell.componentMaterial && <Tag label="Material" />}
+            {spell.componentMaterial && spell.componentGoldRequired && <Tag label="GP Cost" />}
+            {spell.componentMaterial && spell.componentGoldConsumed && <Tag label="Consumed" />}
+            {spell.spellAttack && <Tag label="Spell Attack" />}
             {spell.savingThrowArray.map(save => (
               <Tag key={save} label={`${save} Save`} />
             ))}
