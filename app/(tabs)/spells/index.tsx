@@ -24,7 +24,7 @@ export default function SpellsScreen() {
   const { filters } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
   const [groups, setGroups] = useState<SpellGroup[]>([]);
-  const debouncedQuery = useDebounce(searchQuery, 300);
+  const debouncedQuery = useDebounce(searchQuery, 100);
   const filterActive = isFilterActive(filters);
 
   useEffect(() => {

@@ -11,11 +11,11 @@ export interface Spell {
   duration: string;
   description: string;
   upgrade: string | null;
-  hasVerbal: boolean;
-  hasSomatic: boolean;
-  hasMaterial: boolean;
-  materialCostContainsGP: boolean;
-  materialIsConsumed: boolean;
+  componentVerbal: boolean;
+  componentSomatic: boolean;
+  componentMaterial: boolean;
+  componentGoldRequired: boolean;
+  componentGoldConsumed: boolean;
   damageTypeArray: string[];
   savingThrowArray: string[];
   aoeShapeArray: string[];

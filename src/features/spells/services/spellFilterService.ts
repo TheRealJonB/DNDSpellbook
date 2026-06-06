@@ -45,11 +45,11 @@ export function applyFilters(spells: Spell[], filters: FilterState): Spell[] {
     }
 
     // boolean toggles — null means ignore, true/false means filter
-    if (filters.hasVerbal !== null && spell.hasVerbal !== filters.hasVerbal) return false;
-    if (filters.hasSomatic !== null && spell.hasSomatic !== filters.hasSomatic) return false;
-    if (filters.hasMaterial !== null && spell.hasMaterial !== filters.hasMaterial) return false;
-    if (filters.materialCostContainsGP !== null && spell.materialCostContainsGP !== filters.materialCostContainsGP) return false;
-    if (filters.materialIsConsumed !== null && spell.materialIsConsumed !== filters.materialIsConsumed) return false;
+    if (filters.componentVerbal !== null && spell.componentVerbal !== filters.componentVerbal) return false;
+    if (filters.componentSomatic !== null && spell.componentSomatic !== filters.componentSomatic) return false;
+    if (filters.componentMaterial !== null && spell.componentMaterial !== filters.componentMaterial) return false;
+    if (filters.componentGoldRequired !== null && spell.componentGoldRequired !== filters.componentGoldRequired) return false;
+    if (filters.componentGoldConsumed !== null && spell.componentGoldConsumed !== filters.componentGoldConsumed) return false;
     if (filters.spellAttack !== null && spell.spellAttack !== filters.spellAttack) return false;
     if (filters.ritual !== null && spell.ritual !== filters.ritual) return false;
 
