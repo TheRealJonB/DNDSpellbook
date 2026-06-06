@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
     borderBottomWidth: 0.5,
     flexDirection: 'row',
+    minHeight: 64,
     paddingRight: spacing.md,
     paddingVertical: spacing.sm,
   },
