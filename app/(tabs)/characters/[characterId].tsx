@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCharacters } from '../../../src/features/characters/store/CharacterContext';
 import SpellLevelSection from '../../../src/features/spells/components/SpellLevelSection';
 import { Spell } from '../../../src/features/spells/models/Spell';
-import { getAllSpells } from '../../../src/features/spells/services/spellService';
+import { useSpells } from '../../../src/features/spells/store/SpellContext';
 import { groupSpellsByLevel } from '../../../src/features/spells/utils/spellGrouping';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
@@ -12,13 +12,13 @@ import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
 
-const ALL_SPELLS = getAllSpells();
 
 export default function CharacterDetailScreen() {
   const { characterId } = useLocalSearchParams<{ characterId: string }>();
   const router = useRouter();
   const { getCharacterById, deleteCharacter } = useCharacters();
   const [showSpells, setShowSpells] = useState(false);
+  const { spells: ALL_SPELLS } = useSpells();
 
   const character = getCharacterById(characterId ?? '');
   const characterSpells = character

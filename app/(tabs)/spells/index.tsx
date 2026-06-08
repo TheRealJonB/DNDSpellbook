@@ -6,18 +6,17 @@ import SpellLevelSection from '../../../src/features/spells/components/SpellLeve
 import { Spell } from '../../../src/features/spells/models/Spell';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
 import { searchSpells } from '../../../src/features/spells/services/spellSearchService';
-import { getAllSpells } from '../../../src/features/spells/services/spellService';
 import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { isFilterActive } from '../../../src/features/spells/store/filterStore';
+import { useSpells } from '../../../src/features/spells/store/SpellContext';
 import { groupSpellsByLevel, SpellGroup } from '../../../src/features/spells/utils/spellGrouping';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
+import LoadingSpinner from '../../../src/shared/components/ui/LoadingSpinner';
 import { useDebounce } from '../../../src/shared/hooks/useDebounce';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
-
-const ALL_SPELLS = getAllSpells();
 
 export default function SpellsScreen() {
   const router = useRouter();
@@ -26,6 +25,7 @@ export default function SpellsScreen() {
   const [groups, setGroups] = useState<SpellGroup[]>([]);
   const debouncedQuery = useDebounce(searchQuery, 100);
   const filterActive = isFilterActive(filters);
+  const { spells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
 
   useEffect(() => {
     const filtered = applyFilters(ALL_SPELLS, filters);
@@ -39,6 +39,14 @@ export default function SpellsScreen() {
 
   function handleFilterPress() {
     router.push('/spells/filters');
+  }
+
+  if (spellsLoading) {
+    return (
+      <ScreenContainer>
+        <LoadingSpinner message="Loading spells..." />
+      </ScreenContainer>
+    );
   }
 
   return (
