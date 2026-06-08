@@ -20,8 +20,16 @@ export function SpellProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     initializeSpells()
-      .then(setSpells)
-      .finally(() => setIsLoading(false));
+      .then(loaded => {
+        console.log('SpellContext received:', loaded.length);
+        console.log('First spell:', loaded[0]?.name);
+        setSpells(loaded);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to initialize spells:', err);
+        setIsLoading(false);
+      });
   }, []);
 
   function getSpellByName(name: string): Spell | undefined {

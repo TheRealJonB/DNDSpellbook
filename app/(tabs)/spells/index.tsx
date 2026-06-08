@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import SpellLevelSection from '../../../src/features/spells/components/SpellLevelSection';
 import { Spell } from '../../../src/features/spells/models/Spell';
@@ -9,7 +9,7 @@ import { searchSpells } from '../../../src/features/spells/services/spellSearchS
 import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { isFilterActive } from '../../../src/features/spells/store/filterStore';
 import { useSpells } from '../../../src/features/spells/store/SpellContext';
-import { groupSpellsByLevel, SpellGroup } from '../../../src/features/spells/utils/spellGrouping';
+import { groupSpellsByLevel } from '../../../src/features/spells/utils/spellGrouping';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
 import LoadingSpinner from '../../../src/shared/components/ui/LoadingSpinner';
@@ -20,18 +20,16 @@ import { typography } from '../../../src/shared/theme/typography';
 
 export default function SpellsScreen() {
   const router = useRouter();
+  const { spells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
   const { filters } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
-  const [groups, setGroups] = useState<SpellGroup[]>([]);
-  const debouncedQuery = useDebounce(searchQuery, 100);
+  const debouncedQuery = useDebounce(searchQuery, 300);
   const filterActive = isFilterActive(filters);
-  const { spells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
 
-  useEffect(() => {
-    const filtered = applyFilters(ALL_SPELLS, filters);
-    const searched = searchSpells(filtered, debouncedQuery);
-    setGroups(groupSpellsByLevel(searched));
-  }, [filters, debouncedQuery]);
+  // derive directly instead of storing in state
+  const filtered = applyFilters(ALL_SPELLS, filters);
+  const searched = searchSpells(filtered, debouncedQuery);
+  const groups = groupSpellsByLevel(searched);
 
   function handleSpellPress(spell: Spell) {
     router.push(`/spells/${encodeURIComponent(spell.name)}`);

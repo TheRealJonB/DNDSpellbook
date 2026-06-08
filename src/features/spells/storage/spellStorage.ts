@@ -17,16 +17,16 @@ export async function initSpellTable(): Promise<void> {
       duration TEXT,
       description TEXT,
       upgrade TEXT,
-      has_verbal INTEGER,
-      has_somatic INTEGER,
-      has_material INTEGER,
-      material_cost_contains_gp INTEGER,
-      material_is_consumed INTEGER,
+      component_verbal INTEGER,
+      component_somatic INTEGER,
+      component_material INTEGER,
+      component_gold_required INTEGER,
+      component_gold_consumed INTEGER,
       damage_type_array TEXT,
       saving_throw_array TEXT,
       aoe_shape_array TEXT,
-      is_spell_attack INTEGER,
-      is_ritual INTEGER
+      spell_attack INTEGER,
+      ritual INTEGER
     );
   `);
 }
@@ -38,9 +38,9 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
       await db.runAsync(
         `INSERT OR REPLACE INTO spells (
           name, source, level, school, classes, casting_time, casting_time_abbr,
-          range, components, duration, description, upgrade, has_verbal,
-          has_somatic, has_material, material_cost_contains_gp, material_is_consumed,
-          damage_type_array, saving_throw_array, aoe_shape_array, is_spell_attack, is_ritual
+          range, components, duration, description, upgrade, component_verbal,
+          component_somatic, component_material, component_gold_required, component_gold_consumed,
+          damage_type_array, saving_throw_array, aoe_shape_array, spell_attack, ritual
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           spell.name,
@@ -76,6 +76,11 @@ export async function loadSpells(): Promise<Spell[]> {
   const rows = await db.getAllAsync<Record<string, unknown>>(
     'SELECT * FROM spells ORDER BY level ASC, name ASC'
   );
+  console.log('Raw rows from SELECT:', rows.length);
+  if (rows.length > 0) {
+    console.log('Sample row keys:', Object.keys(rows[0]));
+    console.log('Sample row:', JSON.stringify(rows[0]));
+  }
   return rows.map(row => ({
     name: row.name as string,
     source: row.source as string,
@@ -108,4 +113,27 @@ export async function getSpellCount(): Promise<number> {
     'SELECT COUNT(*) as count FROM spells'
   );
   return result?.count ?? 0;
+}
+
+export async function getSpellDataVersion(): Promise<number> {
+  const db = await getDatabase();
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS app_meta (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `);
+  const row = await db.getFirstAsync<{ value: string }>(
+    'SELECT value FROM app_meta WHERE key = ?',
+    ['spell_data_version']
+  );
+  return row ? parseInt(row.value) : 0;
+}
+
+export async function setSpellDataVersion(version: number): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(
+    'INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)',
+    ['spell_data_version', version.toString()]
+  );
 }

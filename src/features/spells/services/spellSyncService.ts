@@ -1,45 +1,24 @@
 import spellsData from '../data/spells.json';
 import { Spell } from '../models/Spell';
-import { getSpellCount, initSpellTable, loadSpells, saveSpells } from '../storage/spellStorage';
+import { getSpellCount, getSpellDataVersion, initSpellTable, loadSpells, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
-const SPELL_DATA_VERSION = 1; // bump this when spells.json is updated
-const VERSION_KEY = 'spell_data_version';
+const SPELL_DATA_VERSION = 1;
 
 export async function initializeSpells(): Promise<Spell[]> {
   await initSpellTable();
 
   const count = await getSpellCount();
-  const storedVersion = await getStoredVersion();
+  const storedVersion = await getSpellDataVersion();
 
   if (count === 0 || storedVersion < SPELL_DATA_VERSION) {
-    // first launch or data update — seed from JSON
     console.log('Seeding spells from JSON...');
     await saveSpells(spellsData as Spell[]);
-    await setStoredVersion(SPELL_DATA_VERSION);
+    await setSpellDataVersion(SPELL_DATA_VERSION);
+    console.log('Spells in database after seed:', await getSpellCount());
+    console.log('Seeding complete');
   }
 
-  return await loadSpells();
-}
-
-async function getStoredVersion(): Promise<number> {
-  const db = await import('../../../shared/storage/storageClient').then(m => m.getDatabase());
-  await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS app_meta (
-      key TEXT PRIMARY KEY,
-      value TEXT NOT NULL
-    );
-  `);
-  const row = await db.getFirstAsync<{ value: string }>(
-    'SELECT value FROM app_meta WHERE key = ?',
-    [VERSION_KEY]
-  );
-  return row ? parseInt(row.value) : 0;
-}
-
-async function setStoredVersion(version: number): Promise<void> {
-  const db = await import('../../../shared/storage/storageClient').then(m => m.getDatabase());
-  await db.runAsync(
-    'INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)',
-    [VERSION_KEY, version.toString()]
-  );
+  const spells = await loadSpells();
+  console.log('loadSpells returned:', spells.length);
+  return spells;
 }
