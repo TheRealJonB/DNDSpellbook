@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { getSpellByName } from '../../../src/features/spells/services/spellService';
+import { useSpells } from '../../../src/features/spells/store/SpellContext';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
@@ -10,7 +10,9 @@ import { typography } from '../../../src/shared/theme/typography';
 export default function SpellDetailScreen() {
   const { spellName } = useLocalSearchParams<{ spellName: string }>();
   const router = useRouter();
+  const { getSpellByName } = useSpells();
   const spell = getSpellByName(decodeURIComponent(spellName ?? ''));
+
 
   if (!spell) {
     return (

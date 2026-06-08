@@ -1,15 +1,15 @@
 import { useRouter } from 'expo-router';
 import SpellFilterScreen from '../../../src/features/spells/components/SpellFilterScreen';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
-import { getAllSpells } from '../../../src/features/spells/services/spellService';
 import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { FilterState } from '../../../src/features/spells/store/filterStore';
+import { useSpells } from '../../../src/features/spells/store/SpellContext';
 
-const ALL_SPELLS = getAllSpells();
 
 export default function FiltersScreen() {
   const router = useRouter();
   const { filters, setFilters } = useFilters();
+  const { spells: ALL_SPELLS } = useSpells();
 
   const resultCount = applyFilters(ALL_SPELLS, filters).length;
 

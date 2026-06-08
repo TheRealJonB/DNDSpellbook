@@ -1,12 +1,11 @@
-import spellsData from '../data/spells.json';
 import { Spell } from '../models/Spell';
+import { loadSpells } from '../storage/spellStorage';
 
-export function getAllSpells(): Spell[] {
-  return spellsData as Spell[];
+export async function getAllSpells(): Promise<Spell[]> {
+  return await loadSpells();
 }
 
-export function getSpellByName(name: string): Spell | undefined {
-  return spellsData.find(
-    (spell: Spell) => spell.name.toLowerCase() === name.toLowerCase()
-  ) as Spell | undefined;
+export async function getSpellByName(name: string): Promise<Spell | undefined> {
+  const spells = await loadSpells();
+  return spells.find(spell => spell.name.toLowerCase() === name.toLowerCase());
 }

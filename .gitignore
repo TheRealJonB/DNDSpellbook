@@ -41,3 +41,8 @@ app-example
 # generated native folders
 /ios
 /android
+
+# personal notes
+*.doc
+*.docx
+*.txt
