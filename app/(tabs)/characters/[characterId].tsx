@@ -17,7 +17,7 @@ export default function CharacterDetailScreen() {
   const { characterId } = useLocalSearchParams<{ characterId: string }>();
   const router = useRouter();
   const { getCharacterById, deleteCharacter } = useCharacters();
-  const [showSpells, setShowSpells] = useState(false);
+  const [showSpells, setShowSpells] = useState(true);
   const { spells: ALL_SPELLS } = useSpells();
 
   const character = getCharacterById(characterId ?? '');
