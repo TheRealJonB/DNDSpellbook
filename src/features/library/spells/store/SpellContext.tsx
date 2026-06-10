@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Spell } from '../models/Spell';
 import { initializeSpells } from '../services/spellSyncService';
+import { Spell } from '../spells/m../spells/services/spellSyncService
 
 interface SpellContextType {
   spells: Spell[];

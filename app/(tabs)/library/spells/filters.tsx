@@ -1,10 +1,10 @@
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
-import SpellFilterScreen from '../../../src/features/spells/components/SpellFilterScreen';
-import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
-import { useFilters } from '../../../src/features/spells/store/FilterContext';
-import { FilterState } from '../../../src/features/spells/store/filterStore';
-import { useSpells } from '../../../src/features/spells/store/SpellContext';
+import SpellFilterScreen from '../../../../src/features/library/components/SpellFilterScreen';
+import { applyFilters } from '../../../../src/features/library/spells/services/spellFilterService';
+import { useFilters } from '../../../../src/features/library/store/FilterContext';
+import { FilterState } from '../../../../src/features/library/store/filterStore';
+import { useSpells } from '../../../../src/features/library/store/SpellContext';
 
 
 export default function FiltersScreen() {

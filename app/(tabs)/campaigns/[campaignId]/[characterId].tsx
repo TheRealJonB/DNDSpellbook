@@ -2,15 +2,15 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useCharacters } from '../../../src/features/characters/store/CharacterContext';
-import SpellLevelSection from '../../../src/features/spells/components/SpellLevelSection';
-import { Spell } from '../../../src/features/spells/models/Spell';
-import { useSpells } from '../../../src/features/spells/store/SpellContext';
-import { groupSpellsByLevel } from '../../../src/features/spells/utils/spellGrouping';
-import EmptyState from '../../../src/shared/components/ui/EmptyState';
-import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
-import { typography } from '../../../src/shared/theme/typography';
+import { useCharacters } from '../../../../src/features/campaigns/store/CharacterContext';
+import SpellLevelSection from '../../../../src/features/library/spells/components/SpellLevelSection';
+import { Spell } from '../../../../src/features/library/spells/models/Spell';
+import { useSpells } from '../../../../src/features/library/spells/store/SpellContext';
+import { groupSpellsByLevel } from '../../../../src/features/library/spells/utils/spellGrouping';
+import EmptyState from '../../../../src/shared/components/ui/EmptyState';
+import { colors } from '../../../../src/shared/theme/colors';
+import { spacing } from '../../../../src/shared/theme/spacing';
+import { typography } from '../../../../src/shared/theme/typography';
 
 
 export default function CharacterDetailScreen() {
@@ -35,7 +35,7 @@ export default function CharacterDetailScreen() {
   }
 
   function handleSpellPress(spell: Spell) {
-    router.push(`/spells/${encodeURIComponent(spell.name)}`);
+    router.push(`/library/spells/${encodeURIComponent(spell.name)}`);
   }
 
   async function handleDelete() {

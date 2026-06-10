@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import CharacterSelectorScreen from '../../src/features/characters/components/CharacterSelectorScreen';
-import { useCharacters } from '../../src/features/characters/store/CharacterContext';
+import CharacterSelectorScreen from '../../src/features/campaigns/components/CharacterSelectorScreen';
+import { useCharacters } from '../../src/features/campaigns/store/CharacterContext';
 
 export default function CharacterSelectorRoute() {
   const router = useRouter();

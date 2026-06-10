@@ -1,5 +1,5 @@
+import { FilterState } from '../../store/filterStore';
 import { Spell } from '../models/Spell';
-import { FilterState } from '../store/filterStore';
 
 export function applyFilters(spells: Spell[], filters: FilterState): Spell[] {
   return spells.filter(spell => {

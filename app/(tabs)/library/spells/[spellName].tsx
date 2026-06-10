@@ -1,10 +1,10 @@
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSpells } from '../../../src/features/spells/store/SpellContext';
-import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
-import { typography } from '../../../src/shared/theme/typography';
+import { useSpells } from '../../../../src/features/library/store/SpellContext';
+import { colors } from '../../../../src/shared/theme/colors';
+import { spacing } from '../../../../src/shared/theme/spacing';
+import { typography } from '../../../../src/shared/theme/typography';
 
 
 

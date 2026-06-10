@@ -1,4 +1,5 @@
 export interface FilterState {
+  activeCampaignIds: string[];
   levels: number[];
   schools: string[];
   classes: string[];
@@ -17,6 +18,7 @@ export interface FilterState {
 }
 
 export const EMPTY_FILTERS: FilterState = {
+  activeCampaignIds: [],
   levels: [],
   schools: [],
   classes: [],

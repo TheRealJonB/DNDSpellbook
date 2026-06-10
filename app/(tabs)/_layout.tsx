@@ -15,9 +15,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="spells"
+        name="library"
         options={{
-          title: 'Spells',
+          title: 'library',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),

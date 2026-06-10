@@ -2,21 +2,21 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
-import SpellLevelSection from '../../../src/features/library/components/SpellLevelSection';
-import { applyFilters } from '../../../src/features/library/services/spellFilterService';
-import { searchSpells } from '../../../src/features/library/spells/services/spellFilterService';
-import { Spell } from '../../.../../../src/features/library/spells/services/spellSearchService
-import { useFilters } from '../../../src/features/library/store/FilterContext';
-import { isFilterActive } from '../../../src/features/library/store/filterStore';
-import { useSpells } from '../../../src/features/library/store/SpellContext';
-import { groupSpellsByLevel } from '../../../src/features/library/utils/spellGrouping';
-import EmptyState from '../../../src/shared/components/ui/EmptyState';
-import LoadingSpinner from '../../../src/shared/components/ui/LoadingSpinner';
-import { useDebounce } from '../../../src/shared/hooks/useDebounce';
-import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
-import { typography } from '../../../src/shared/theme/typography';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import SpellLevelSection from '../../../../src/features/library/spells/components/SpellLevelSection';
+import { Spell } from '../../../../src/features/library/spells/models/Spell';
+import { applyFilters } from '../../../../src/features/library/spells/services/spellFilterService';
+import { searchSpells } from '../../../../src/features/library/spells/services/spellSearchService';
+import { useFilters } from '../../../../src/features/library/spells/store/FilterContext';
+import { isFilterActive } from '../../../../src/features/library/spells/store/filterStore';
+import { useSpells } from '../../../../src/features/library/spells/store/SpellContext';
+import { groupSpellsByLevel } from '../../../../src/features/library/spells/utils/spellGrouping';
+import EmptyState from '../../../../src/shared/components/ui/EmptyState';
+import LoadingSpinner from '../../../../src/shared/components/ui/LoadingSpinner';
+import { useDebounce } from '../../../../src/shared/hooks/useDebounce';
+import { colors } from '../../../../src/shared/theme/colors';
+import { spacing } from '../../../../src/shared/theme/spacing';
+import { typography } from '../../../../src/shared/theme/typography';
 
 
 export default function SpellsScreen() {
@@ -33,11 +33,11 @@ export default function SpellsScreen() {
   const groups = groupSpellsByLevel(searched);
 
   function handleSpellPress(spell: Spell) {
-    router.push(`/spells/${encodeURIComponent(spell.name)}`);
+    router.push(`/library/spells/${encodeURIComponent(spell.name)}`);
   }
 
   function handleFilterPress() {
-    router.push('/spells/filters');
+    router.push('/library/spells/filters');
   }
 
   if (spellsLoading) {
@@ -52,7 +52,14 @@ export default function SpellsScreen() {
 
   return (
     <ScreenContainer>
-    <View>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.push('/(tabs)/library')}>
+          <Text style={styles.backText}>← Library</Text>
+        </Pressable>
+        <View style={styles.searchRow}>
+          // ... existing search bar and filter button
+        </View>
+      </View>
       <View style={styles.searchRow}>
         <View style={styles.searchContainer}>
           <Ionicons
@@ -110,12 +117,24 @@ export default function SpellsScreen() {
           ))
         )}
       </ScrollView>
-    </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 0.5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  backText: {
+    color: colors.accentLight,
+    fontSize: typography.sizes.sm,
+  },
   filterButton: {
     alignItems: 'center',
     borderColor: colors.borderLight,

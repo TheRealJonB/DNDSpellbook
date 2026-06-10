@@ -2,10 +2,10 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useCharacters } from '../../../src/features/characters/store/CharacterContext';
-import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
-import { typography } from '../../../src/shared/theme/typography';
+import { useCharacters } from '../../../../src/features/campaigns/store/CharacterContext';
+import { colors } from '../../../../src/shared/theme/colors';
+import { spacing } from '../../../../src/shared/theme/spacing';
+import { typography } from '../../../../src/shared/theme/typography';
 
 export default function CreateCharacterScreen() {
   const router = useRouter();
