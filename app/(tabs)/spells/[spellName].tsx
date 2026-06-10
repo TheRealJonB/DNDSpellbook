@@ -1,10 +1,11 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSpells } from '../../../src/features/spells/store/SpellContext';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
+
 
 
 export default function SpellDetailScreen() {
@@ -38,6 +39,15 @@ export default function SpellDetailScreen() {
           <Text style={styles.name}>{spell.name}</Text>
           <Text style={[styles.levelLabel, { color: schoolColor }]}>{levelLabel}</Text>
           <Text style={styles.source}>{spell.source}</Text>
+          <Pressable
+            onPress={() => router.push({
+              pathname: '../character-selector',
+              params: { spellNames: JSON.stringify([spell.name]) },
+            })}
+            style={styles.addButton}
+          >
+            <Text style={styles.addButtonText}>+ Add to Character</Text>
+          </Pressable>
         </View>
 
         <ScrollView
@@ -115,6 +125,17 @@ function Tag({ label }: { label: string }) {
 }
 
 const styles = StyleSheet.create({
+    addButton: {
+    borderColor: colors.borderLight,
+    borderRadius: 6,
+    borderWidth: 0.5,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  addButtonText: {
+    color: colors.textSecondary,
+    fontSize: typography.sizes.sm,
+  },
   backButton: {
     marginBottom: spacing.sm,
   },

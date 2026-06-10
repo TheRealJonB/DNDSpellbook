@@ -1,3 +1,4 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
 import SpellFilterScreen from '../../../src/features/spells/components/SpellFilterScreen';
 import { applyFilters } from '../../../src/features/spells/services/spellFilterService';
@@ -22,11 +23,13 @@ export default function FiltersScreen() {
   }
 
   return (
-    <SpellFilterScreen
-      filters={filters}
-      onFiltersChange={handleFiltersChange}
-      onClose={handleClose}
-      resultCount={resultCount}
-    />
+    <ScreenContainer>
+      <SpellFilterScreen
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClose={handleClose}
+        resultCount={resultCount}
+      />
+    </ScreenContainer>
   );
 }

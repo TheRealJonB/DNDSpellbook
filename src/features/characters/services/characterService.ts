@@ -1,12 +1,12 @@
 import * as Crypto from 'expo-crypto';
 import { Character } from '../models/Character';
 import {
-  addSpellToCharacter,
+  addSpellsToCharacters,
   deleteCharacter,
   initCharacterTable,
   loadCharacters,
-  removeSpellFromCharacter,
-  saveCharacter,
+  removeSpellsFromCharacter,
+  saveCharacter
 } from '../storage/characterStorage';
 
 export async function initializeCharacters(): Promise<Character[]> {
@@ -33,10 +33,10 @@ export async function removeCharacter(id: string): Promise<void> {
   await deleteCharacter(id);
 }
 
-export async function addSpell(characterId: string, spellName: string): Promise<void> {
-  await addSpellToCharacter(characterId, spellName);
+export async function addSpells(characterId: string[], spellName: string[]): Promise<void> {
+  await addSpellsToCharacters(characterId, spellName);
 }
 
-export async function removeSpell(characterId: string, spellName: string): Promise<void> {
-  await removeSpellFromCharacter(characterId, spellName);
+export async function removeSpells(characterId: string, spellName: string[]): Promise<void> {
+  await removeSpellsFromCharacter(characterId, spellName);
 }

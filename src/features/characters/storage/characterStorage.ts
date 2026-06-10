@@ -46,25 +46,46 @@ export async function deleteCharacter(id: string): Promise<void> {
   await db.runAsync('DELETE FROM characters WHERE id = ?', [id]);
 }
 
-export async function addSpellToCharacter(characterId: string, spellName: string): Promise<void> {
+export async function addSpellsToCharacters(characterIds: string[], spellNames: string[]): Promise<void> {
+  if (characterIds.length === 0) return;
+
   const db = await getDatabase();
-  const row = await db.getFirstAsync<{ spell_names: string }>(
-    'SELECT spell_names FROM characters WHERE id = ?',
-    [characterId]
-  );
-  if (!row) return;
 
-  const spellNames: string[] = JSON.parse(row.spell_names);
-  if (spellNames.includes(spellName)) return;
+  // 1. Generate placeholders (?, ?, ?) for the dynamic array of IDs
+  const placeholders = characterIds.map(() => '?').join(',');
 
-  spellNames.push(spellName);
-  await db.runAsync(
-    'UPDATE characters SET spell_names = ? WHERE id = ?',
-    [JSON.stringify(spellNames), characterId]
+  // 2. Fetch all target characters in a single query
+  const rows = await db.getAllAsync<{ id: string; spell_names: string }>(
+    `SELECT id, spell_names FROM characters WHERE id IN (${placeholders})`, characterIds
   );
+
+  // 3. Use a transaction to perform all updates in a single disk write
+  await db.withTransactionAsync(async () => {
+    // 4. Prepare the update statement once to reuse it efficiently
+    const statement = await db.prepareAsync(
+      'UPDATE characters SET spell_names = ? WHERE id = ?'
+    );
+
+    try {
+      for (const row of rows) {
+        const existingSpells: string[] = JSON.parse(row.spell_names || '[]');
+        const toAdd = spellNames.filter(name => !existingSpells.includes(name));
+
+        if (toAdd.length === 0) continue;
+
+        const updated = [...existingSpells, ...toAdd];
+
+        // Execute the prepared statement with the updated array
+        await statement.executeAsync([JSON.stringify(updated), row.id]);
+      }
+    } finally {
+      // Always finalize your prepared statements to prevent memory leaks
+      await statement.finalizeAsync();
+    }
+  });
 }
 
-export async function removeSpellFromCharacter(characterId: string, spellName: string): Promise<void> {
+export async function removeSpellsFromCharacter(characterId: string, spellNames: string[]): Promise<void> {
   const db = await getDatabase();
   const row = await db.getFirstAsync<{ spell_names: string }>(
     'SELECT spell_names FROM characters WHERE id = ?',
@@ -72,9 +93,10 @@ export async function removeSpellFromCharacter(characterId: string, spellName: s
   );
   if (!row) return;
 
-  const spellNames: string[] = (JSON.parse(row.spell_names) as string[]).filter(n => n !== spellName);
+  
+  const newSpells: string[] = (JSON.parse(row.spell_names) as string[]).filter(n => !spellNames.includes(n));
   await db.runAsync(
     'UPDATE characters SET spell_names = ? WHERE id = ?',
-    [JSON.stringify(spellNames), characterId]
+    [JSON.stringify(newSpells), characterId]
   );
 }

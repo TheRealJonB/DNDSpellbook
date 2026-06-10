@@ -76,10 +76,10 @@ export async function loadSpells(): Promise<Spell[]> {
   const rows = await db.getAllAsync<Record<string, unknown>>(
     'SELECT * FROM spells ORDER BY level ASC, name ASC'
   );
-  console.log('Raw rows from SELECT:', rows.length);
+  // console.log('Raw rows from SELECT:', rows.length);
   if (rows.length > 0) {
-    console.log('Sample row keys:', Object.keys(rows[0]));
-    console.log('Sample row:', JSON.stringify(rows[0]));
+    // console.log('Sample row keys:', Object.keys(rows[0]));
+    // console.log('Sample row:', JSON.stringify(rows[0]));
   }
   return rows.map(row => ({
     name: row.name as string,

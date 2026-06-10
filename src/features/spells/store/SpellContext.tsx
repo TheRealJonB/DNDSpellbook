@@ -21,13 +21,13 @@ export function SpellProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     initializeSpells()
       .then(loaded => {
-        console.log('SpellContext received:', loaded.length);
-        console.log('First spell:', loaded[0]?.name);
+        // console.log('SpellContext received:', loaded.length);
+        // console.log('First spell:', loaded[0]?.name);
         setSpells(loaded);
         setIsLoading(false);
       })
       .catch(err => {
-        console.error('Failed to initialize spells:', err);
+        // console.error('Failed to initialize spells:', err);
         setIsLoading(false);
       });
   }, []);
