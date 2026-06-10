@@ -1,3 +1,4 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -6,7 +7,6 @@ import SpellLevelSection from '../../../src/features/spells/components/SpellLeve
 import { Spell } from '../../../src/features/spells/models/Spell';
 import { useSpells } from '../../../src/features/spells/store/SpellContext';
 import { groupSpellsByLevel } from '../../../src/features/spells/utils/spellGrouping';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';

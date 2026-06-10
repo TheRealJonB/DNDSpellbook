@@ -45,4 +45,5 @@ app-example
 # personal notes
 *.doc
 *.docx
+*.tmp
 *.txt

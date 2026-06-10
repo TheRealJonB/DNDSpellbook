@@ -1,3 +1,4 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -10,13 +11,13 @@ import { useFilters } from '../../../src/features/spells/store/FilterContext';
 import { isFilterActive } from '../../../src/features/spells/store/filterStore';
 import { useSpells } from '../../../src/features/spells/store/SpellContext';
 import { groupSpellsByLevel } from '../../../src/features/spells/utils/spellGrouping';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
 import LoadingSpinner from '../../../src/shared/components/ui/LoadingSpinner';
 import { useDebounce } from '../../../src/shared/hooks/useDebounce';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
+
 
 export default function SpellsScreen() {
   const router = useRouter();
@@ -42,13 +43,16 @@ export default function SpellsScreen() {
   if (spellsLoading) {
     return (
       <ScreenContainer>
+      <View>
         <LoadingSpinner message="Loading spells..." />
+      </View>
       </ScreenContainer>
     );
   }
 
   return (
     <ScreenContainer>
+    <View>
       <View style={styles.searchRow}>
         <View style={styles.searchContainer}>
           <Ionicons
@@ -106,6 +110,7 @@ export default function SpellsScreen() {
           ))
         )}
       </ScrollView>
+    </View>
     </ScreenContainer>
   );
 }

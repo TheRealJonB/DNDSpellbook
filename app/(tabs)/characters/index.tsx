@@ -1,9 +1,9 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import CharacterCard from '../../../src/features/characters/components/CharacterCard';
 import { Character } from '../../../src/features/characters/models/Character';
 import { useCharacters } from '../../../src/features/characters/store/CharacterContext';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import EmptyState from '../../../src/shared/components/ui/EmptyState';
 import LoadingSpinner from '../../../src/shared/components/ui/LoadingSpinner';
 import { colors } from '../../../src/shared/theme/colors';

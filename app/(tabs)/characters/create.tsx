@@ -1,8 +1,8 @@
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useCharacters } from '../../../src/features/characters/store/CharacterContext';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';

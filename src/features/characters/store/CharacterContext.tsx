@@ -1,11 +1,12 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Character } from '../models/Character';
 import {
-  initializeCharacters,
+  addSpells,
   createCharacter,
+  getAllCharacters,
+  initializeCharacters,
   removeCharacter,
-  addSpell,
-  removeSpell,
+  removeSpells,
 } from '../services/characterService';
 
 interface CharacterContextType {
@@ -13,9 +14,9 @@ interface CharacterContextType {
   isLoading: boolean;
   createCharacter: (name: string) => Promise<Character>;
   deleteCharacter: (id: string) => Promise<void>;
-  addSpellToCharacter: (characterId: string, spellName: string) => Promise<void>;
-  removeSpellFromCharacter: (characterId: string, spellName: string) => Promise<void>;
   getCharacterById: (id: string) => Character | undefined;
+  addSpells: (characterIds: string[], spellNames: string[]) => Promise<void>;
+  removeSpells: (characterId: string, spellName: string[]) => Promise<void>;
 }
 
 const CharacterContext = createContext<CharacterContextType>({
@@ -23,9 +24,9 @@ const CharacterContext = createContext<CharacterContextType>({
   isLoading: true,
   createCharacter: async () => ({ id: '', name: '', spellNames: [], createdAt: '' }),
   deleteCharacter: async () => {},
-  addSpellToCharacter: async () => {},
-  removeSpellFromCharacter: async () => {},
   getCharacterById: () => undefined,
+  addSpells: async () => {},
+  removeSpells: async () => {},
 });
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
@@ -49,26 +50,26 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     setCharacters(prev => prev.filter(c => c.id !== id));
   }
 
-  async function handleAddSpell(characterId: string, spellName: string): Promise<void> {
-    await addSpell(characterId, spellName);
-    setCharacters(prev => prev.map(c =>
-      c.id === characterId && !c.spellNames.includes(spellName)
-        ? { ...c, spellNames: [...c.spellNames, spellName] }
-        : c
-    ));
-  }
-
-  async function handleRemoveSpell(characterId: string, spellName: string): Promise<void> {
-    await removeSpell(characterId, spellName);
-    setCharacters(prev => prev.map(c =>
-      c.id === characterId
-        ? { ...c, spellNames: c.spellNames.filter(n => n !== spellName) }
-        : c
-    ));
-  }
-
   function getCharacterById(id: string): Character | undefined {
     return characters.find(c => c.id === id);
+  }
+
+  async function handleAddSpells(
+    characterIds: string[],
+    spellNames: string[]
+  ): Promise<void> {
+    await addSpells(characterIds, spellNames);
+    const updated = await getAllCharacters();
+    setCharacters(updated);
+  }
+
+  async function handleRemoveSpells(characterId: string, spellNames: string[]): Promise<void> {
+    await removeSpells(characterId, spellNames);
+    setCharacters(prev => prev.map(c =>
+      c.id === characterId
+        ? { ...c, spellNames: c.spellNames.filter(n => !spellNames.includes(n)) }
+        : c
+    ));
   }
 
   return (
@@ -77,9 +78,9 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       isLoading,
       createCharacter: handleCreateCharacter,
       deleteCharacter: handleDeleteCharacter,
-      addSpellToCharacter: handleAddSpell,
-      removeSpellFromCharacter: handleRemoveSpell,
       getCharacterById,
+      addSpells: handleAddSpells,
+      removeSpells: handleRemoveSpells,
     }}>
       {children}
     </CharacterContext.Provider>
