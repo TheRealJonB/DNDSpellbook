@@ -2,8 +2,7 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import SpellLevelSection from '../../../../src/features/library/spells/components/SpellLevelSection';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Spell } from '../../../../src/features/library/spells/models/Spell';
 import { applyFilters } from '../../../../src/features/library/spells/services/spellFilterService';
 import { searchSpells } from '../../../../src/features/library/spells/services/spellSearchService';
@@ -43,9 +42,7 @@ export default function SpellsScreen() {
   if (spellsLoading) {
     return (
       <ScreenContainer>
-      <View>
         <LoadingSpinner message="Loading spells..." />
-      </View>
       </ScreenContainer>
     );
   }
@@ -90,6 +87,48 @@ export default function SpellsScreen() {
       </View>
       
 
+      {/* 
+      <FlatList
+        // what do these do
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        // ------------------
+        data={groupedSpells}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <SpellLevelSection // rename to CollapsibleSpellList i think
+            key={group.level}
+            level={index}
+            onSpellPress={handleSpellPress}
+            spells={item}
+          /> 
+        )}
+        ListEmptyComponent={<EmptyState
+            message="No spells found"
+            subMessage={
+              searchQuery
+                ? `No results for "${searchQuery}"`
+                : 'Try adjusting your filters'
+            }
+          />}
+        // Performance boosters for 400+ total nested items
+        // may be buggy, especially on ios
+        // Also note this does not save significant memory because the views are not deallocated, only detached.
+        // https://reactnative.dev/docs/optimizing-flatlist-configuration#removeclippedsubviews
+        removeClippedSubviews={true}
+        // https://reactnative.dev/docs/optimizing-flatlist-configuration#initialnumtorender
+        initialNumToRender={4} // spell levels not individual spells
+        // https://reactnative.dev/docs/optimizing-flatlist-configuration#maxtorenderperbatch
+        maxToRenderPerBatch={3}
+        // https://reactnative.dev/docs/optimizing-flatlist-configuration#windowsize
+        windowSize={5}
+      /> 
+      */}
+
+      // 3 Tips for Empty StatesFlexbox Centering: To center your empty message exactly in the middle of the screen, you must add flexGrow: 1 to the contentContainerStyle prop, not the regular style prop.Dynamic Styling: You can conditionally apply this centering style by checking data.length === 0 (as shown in the code above) so it doesn't distort your layout when data actually loads.Component Support: ListEmptyComponent fully respects your list's ListHeaderComponent and ListFooterComponent. If you use them, your empty state will safely render perfectly sandwiched right between them.
+      // create a reusable spell list component that this screen can use and the character can use for their specific spell list
+      // should have input for the list of spells, and what the message is when its empty (click to add spells vs no spells found by your query)
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
