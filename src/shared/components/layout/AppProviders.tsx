@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CharacterProvider } from '../../../features/campaigns/store/CharacterContext';
-import { SpellProvider } from '../../../features/library/store/SpellContext';
+import { SpellProvider } from '../../../features/library/spells/store/SpellContext';
 
 interface Props {
   children: ReactNode;

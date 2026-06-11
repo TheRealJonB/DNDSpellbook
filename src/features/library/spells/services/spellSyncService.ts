@@ -1,6 +1,6 @@
-import { getSpellCount, getSpellDataVersion, initSpellTable, loadSpells, saveSpells, setSpellDataVersion } from '../../storage/spellStorage';
 import spellsData from '../data/spells.json';
 import { Spell } from '../models/Spell';
+import { getSpellCount, getSpellDataVersion, initSpellTable, loadSpells, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
 const SPELL_DATA_VERSION = 1;
 

@@ -17,16 +17,16 @@ export default function TabLayout() {
       <Tabs.Screen
         name="library"
         options={{
-          title: 'library',
+          title: 'Library',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="characters"
+        name="campaigns"
         options={{
-          title: 'Characters',
+          title: 'Campaigns',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),

@@ -1,4 +1,4 @@
-import { Spell } from '../spells/models/Spell';
+import { Spell } from '../models/Spell';
 
 export interface SpellGroup {
   level: number;

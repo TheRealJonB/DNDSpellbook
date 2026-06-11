@@ -15,11 +15,11 @@ export default function CharactersScreen() {
   const { characters, isLoading } = useCharacters();
 
   function handleCharacterPress(character: Character) {
-    router.push(`/characters/${character.id}`);
+    router.push(`/campaigns/${character.id}`); // FIX THIS
   }
 
   function handleCreatePress() {
-    router.push('/characters/create');
+    router.push('/campaigns/create'); // FIX THIS
   }
 
   if (isLoading) {

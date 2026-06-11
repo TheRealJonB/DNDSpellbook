@@ -1,5 +1,5 @@
-import { getDatabase } from '../../../shared/storage/storageClient';
-import { Spell } from '../spells/models/Spell';
+import { getDatabase } from '../../../../shared/storage/storageClient';
+import { Spell } from '../models/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();

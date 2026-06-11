@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../../shared/theme/colors';
-import { spacing } from '../../../shared/theme/spacing';
-import { typography } from '../../../shared/theme/typography';
+import { colors } from '../../../../shared/theme/colors';
+import { spacing } from '../../../../shared/theme/spacing';
+import { typography } from '../../../../shared/theme/typography';
 import { Spell } from '../models/Spell';
 
 interface Props {

@@ -57,40 +57,38 @@ export default function SpellsScreen() {
           <Text style={styles.backText}>← Library</Text>
         </Pressable>
         <View style={styles.searchRow}>
-          // ... existing search bar and filter button
+          <View style={styles.searchContainer}>
+            <Ionicons
+              name="search-outline"
+              size={16}
+              color={colors.textMuted}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search spells..."
+              placeholderTextColor={colors.textMuted}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCorrect={false}
+              autoCapitalize="none"
+              clearButtonMode="while-editing"
+            />
+          </View>
+          <Pressable
+            onPress={handleFilterPress}
+            style={[styles.filterButton, filterActive && styles.filterButtonActive]}
+          >
+            <Ionicons
+              name="options-outline"
+              size={20}
+              color={filterActive ? colors.accentLight : colors.textMuted}
+            />
+            {filterActive && <View style={styles.filterDot} />}
+          </Pressable>
         </View>
       </View>
-      <View style={styles.searchRow}>
-        <View style={styles.searchContainer}>
-          <Ionicons
-            name="search-outline"
-            size={16}
-            color={colors.textMuted}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search spells..."
-            placeholderTextColor={colors.textMuted}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoCorrect={false}
-            autoCapitalize="none"
-            clearButtonMode="while-editing"
-          />
-        </View>
-        <Pressable
-          onPress={handleFilterPress}
-          style={[styles.filterButton, filterActive && styles.filterButtonActive]}
-        >
-          <Ionicons
-            name="options-outline"
-            size={20}
-            color={filterActive ? colors.accentLight : colors.textMuted}
-          />
-          {filterActive && <View style={styles.filterDot} />}
-        </Pressable>
-      </View>
+      
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}

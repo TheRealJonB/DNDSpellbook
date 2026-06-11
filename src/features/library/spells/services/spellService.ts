@@ -1,5 +1,5 @@
-import { loadSpells } from '../../storage/spellStorage';
 import { Spell } from '../models/Spell';
+import { loadSpells } from '../storage/spellStorage';
 
 export async function getAllSpells(): Promise<Spell[]> {
   return await loadSpells();

@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../../shared/theme/colors';
-import { spacing } from '../../../shared/theme/spacing';
-import { typography } from '../../../shared/theme/typography';
+import { colors } from '../../../../shared/theme/colors';
+import { spacing } from '../../../../shared/theme/spacing';
+import { typography } from '../../../../shared/theme/typography';
 import {
   AOE_SHAPES, CASTING_TIMES,
   DAMAGE_TYPES,
