@@ -81,6 +81,8 @@ export default function CharacterDetailScreen() {
           <Text style={styles.chevron}>{showSpells ? '▲' : '▼'}</Text>
         </Pressable>
 
+        // FIX THIS
+        // will likely move this to its own screen that you get to from the character screen
         {showSpells && (
           groups.length === 0 ? (
             <View style={styles.emptySpells}>
