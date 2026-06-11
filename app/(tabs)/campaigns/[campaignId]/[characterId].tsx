@@ -56,6 +56,23 @@ export default function CharacterDetailScreen() {
         </Pressable>
       </View>
 
+
+      {/* <FlatList
+        data={yourData}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={() => (
+          <View>
+            <Text>Header Content (like your ScrollView views)</Text>
+          </View>
+        )}
+        ListFooterComponent={() => (
+          <View>
+            <Text>Footer Content</Text>
+          </View>
+        )}
+      /> */}
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
