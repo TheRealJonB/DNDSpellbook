@@ -2,7 +2,8 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import SpellLevelSection from '../../../../src/features/library/spells/components/SpellLevelSection';
 import { Spell } from '../../../../src/features/library/spells/models/Spell';
 import { applyFilters } from '../../../../src/features/library/spells/services/spellFilterService';
 import { searchSpells } from '../../../../src/features/library/spells/services/spellSearchService';
@@ -16,6 +17,7 @@ import { useDebounce } from '../../../../src/shared/hooks/useDebounce';
 import { colors } from '../../../../src/shared/theme/colors';
 import { spacing } from '../../../../src/shared/theme/spacing';
 import { typography } from '../../../../src/shared/theme/typography';
+
 
 
 export default function SpellsScreen() {
