@@ -1,53 +1,31 @@
-import { useState } from 'react';
-import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
-import { Spell } from '../models/Spell';
-import SpellCard from './SpellCard';
 
 interface Props {
   level: number;
-  onSpellPress: (spell: Spell) => void;
-  spells: Spell[];
+  count: number;
+  isExpanded: boolean;
+  onToggle: (level: number) => void;
 }
 
-function levelLabel(level: number): string {
+export function levelLabel(level: number): string {
   if (level === 0) return 'Cantrips';
   const suffixes: Record<number, string> = { 1: 'st', 2: 'nd', 3: 'rd' };
   const suffix = suffixes[level] ?? 'th';
   return `${level}${suffix} Level`;
 }
 
-export default function SpellLevelSection({ level, onSpellPress, spells }: Props) {
-  const [expanded, setExpanded] = useState(true);
-
-  function handleToggle() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpanded(prev => !prev);
-  }
-
+export default function SpellLevelSection({ level, count, isExpanded, onToggle }: Props) {
   return (
-    <View style={styles.container}>
-      <Pressable onPress={handleToggle} style={styles.header}>
-        <Text style={styles.title}>{levelLabel(level)}</Text>
-        <View style={styles.headerRight}>
-          <Text style={styles.count}>{spells.length}</Text>
-          <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
-        </View>
-      </Pressable>
-      {expanded && (
-        <View>
-          {spells.map(spell => (
-            <SpellCard
-              key={spell.name}
-              onPress={onSpellPress}
-              spell={spell}
-            />
-          ))}
-        </View>
-      )}
-    </View>
+    <Pressable onPress={() => onToggle(level)} style={styles.header}>
+      <Text style={styles.title}>{levelLabel(level)}</Text>
+      <View style={styles.headerRight}>
+        <Text style={styles.count}>{count}</Text>
+        <Text style={styles.chevron}>{isExpanded ? '▲' : '▼'}</Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -55,9 +33,6 @@ const styles = StyleSheet.create({
   chevron: {
     color: colors.textMuted,
     fontSize: typography.sizes.xs,
-  },
-  container: {
-    marginBottom: spacing.xs,
   },
   count: {
     color: colors.textMuted,

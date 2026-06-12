@@ -1,9 +1,8 @@
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useCharacters } from '../../../../src/features/campaigns/store/CharacterContext';
-import SpellLevelSection from '../../../../src/features/library/spells/components/SpellLevelSection';
 import { Spell } from '../../../../src/features/library/spells/models/Spell';
 import { useSpells } from '../../../../src/features/library/spells/store/SpellContext';
 import { groupSpellsByLevel } from '../../../../src/features/library/spells/utils/spellGrouping';
@@ -56,24 +55,7 @@ export default function CharacterDetailScreen() {
         </Pressable>
       </View>
 
-
-      {/* <FlatList
-        data={yourData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={() => (
-          <View>
-            <Text>Header Content (like your ScrollView views)</Text>
-          </View>
-        )}
-        ListFooterComponent={() => (
-          <View>
-            <Text>Footer Content</Text>
-          </View>
-        )}
-      /> */}
-
-      <ScrollView
+      {/* <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -119,7 +101,7 @@ export default function CharacterDetailScreen() {
             ))
           )
         )}
-      </ScrollView>
+      </ScrollView> */}
     </ScreenContainer>
   );
 }
