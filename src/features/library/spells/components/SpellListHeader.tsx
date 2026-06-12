@@ -12,12 +12,12 @@ interface Props {
   onBack: () => void;
 }
 
-export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, onFilterPress, onBack}: Props) {
+export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, onFilterPress, onBack }: Props) {
   return (
-    <View style={styles.container}>
-        <Pressable onPress={onBack}>
-            <Text style={styles.backText}>← Library</Text>
-        </Pressable>
+    <View style={styles.headerContainer}>
+      <Pressable onPress={onBack}>
+        <Text style={styles.backText}>← Library</Text>
+      </Pressable>
       <View style={styles.searchContainer}>
         <Ionicons
           name="search-outline"
@@ -52,7 +52,7 @@ export default function SpellListHeader({ searchQuery, onSearchChange, filterAct
 }
 
 const styles = StyleSheet.create({
-  container: {
+  headerContainer: {
     alignItems: 'center',
     borderBottomColor: colors.border,
     borderBottomWidth: 0.5,
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
-  
   backText: {
     color: colors.accentLight,
     fontSize: typography.sizes.sm,

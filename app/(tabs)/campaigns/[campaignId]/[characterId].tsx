@@ -54,54 +54,6 @@ export default function CharacterDetailScreen() {
           <Text style={styles.deleteText}>Delete</Text>
         </Pressable>
       </View>
-
-      {/* <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Character</Text>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Name</Text>
-            <Text style={styles.infoValue}>{character.name}</Text>
-          </View>
-        </View>
-
-        <Pressable
-          onPress={() => setShowSpells(prev => !prev)}
-          style={styles.spellsHeader}
-        >
-          <View>
-            <Text style={styles.sectionTitle}>Spell List</Text>
-            <Text style={styles.spellCount}>
-              {character.spellNames.length} {character.spellNames.length === 1 ? 'spell' : 'spells'}
-            </Text>
-          </View>
-          <Text style={styles.chevron}>{showSpells ? '▲' : '▼'}</Text>
-        </Pressable>
-
-        // FIX THIS
-        // will likely move this to its own screen that you get to from the character screen
-        {showSpells && (
-          groups.length === 0 ? (
-            <View style={styles.emptySpells}>
-              <EmptyState
-                message="No spells yet"
-                subMessage="Add spells from the spell list"
-              />
-            </View>
-          ) : (
-            groups.map(group => (
-              <SpellLevelSection
-                key={group.level}
-                level={group.level}
-                onSpellPress={handleSpellPress}
-                spells={group.spells}
-              />
-            ))
-          )
-        )}
-      </ScrollView> */}
     </ScreenContainer>
   );
 }

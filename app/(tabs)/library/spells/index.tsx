@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import SpellList from '../../../../src/features/library/spells/components/SpellList';
 import SpellListHeader from '../../../../src/features/library/spells/components/SpellListHeader';
-import { Spell } from '../../../../src/features/library/spells/models/Spell';
 import { applyFilters } from '../../../../src/features/library/spells/services/spellFilterService';
 import { searchSpells } from '../../../../src/features/library/spells/services/spellSearchService';
 import { useFilters } from '../../../../src/features/library/spells/store/FilterContext';
@@ -20,9 +19,6 @@ export default function SpellsScreen() {
   const { spells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
   const { filters } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedLevels, setExpandedLevels] = useState<Set<number>>(
-    new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-  );
   const debouncedQuery = useDebounce(searchQuery, 300);
   const filterActive = isFilterActive(filters);
 
@@ -40,10 +36,6 @@ export default function SpellsScreen() {
     groupSpellsByLevel(searched),
     [searched]
   );
-
-  function handleSpellPress(spell: Spell) {
-    router.push(`/(tabs)/library/spells/${encodeURIComponent(spell.name)}`);
-  }
 
   function handleFilterPress() {
     router.push('/(tabs)/library/spells/filters');
