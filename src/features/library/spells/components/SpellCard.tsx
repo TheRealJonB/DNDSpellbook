@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
@@ -9,7 +10,7 @@ interface Props {
   spell: Spell;
 }
 
-export default function SpellCard({ onPress, spell }: Props) {
+function SpellCard({ onPress, spell }: Props) {
   const schoolColor = colors.school[spell.school] ?? colors.accentLight;
 
   return (
@@ -41,6 +42,8 @@ export default function SpellCard({ onPress, spell }: Props) {
     </Pressable>
   );
 }
+
+export default memo(SpellCard);
 
 const styles = StyleSheet.create({
   card: {

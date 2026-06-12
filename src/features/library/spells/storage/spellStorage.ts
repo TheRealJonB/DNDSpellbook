@@ -1,4 +1,4 @@
-import { getDatabase } from '../../../../shared/storage/storageClient';
+import { getDatabase } from '@/src/shared/storage/storageClient';
 import { Spell } from '../models/Spell';
 
 export async function initSpellTable(): Promise<void> {
