@@ -41,22 +41,10 @@ export default function SpellList({ groupedSpells }: Props) {
 
     const tabOffset = useSharedValue(0);
 
-    // 💡 Derive the highlighted index directly from the bar's position
+    // Derive the highlighted index directly from the bar's position
     const activeIndexDerived = useDerivedValue(() => {
         return Math.round(tabOffset.value / TAB_WIDTH);
     });
-
-    // useEffect(() => {
-    //     tabOffset.value = withTiming(activeTab * TAB_WIDTH, {
-    //         duration: 250, // smooth 250ms sliding transition
-    //     });
-    // }, [activeTab]);
-
-    // const animatedIndicatorStyle = useAnimatedStyle(() => {
-    //     return {
-    //         transform: [{ translateX: tabOffset.value }],
-    //     };
-    // });
 
 
     const handleListLoaded = useCallback((index: number) => {
@@ -69,7 +57,7 @@ export default function SpellList({ groupedSpells }: Props) {
     }, [maxLoadedTab]);
 
     const handleTabPress = (index: number): void => {
-        // 💡 Slide the bar and the page at the exact same time
+        // Slide the bar and the page at the exact same time
         tabOffset.value = withSpring(index * TAB_WIDTH, NATIVE_SPRING_CONFIG);
         pagerRef.current?.setPage(index);
     };
@@ -77,7 +65,7 @@ export default function SpellList({ groupedSpells }: Props) {
     const handlePageSelected = (e: any) => {
         const position = e.nativeEvent.position;
 
-        // 💡 If swiping with a finger, animate the bar to catch up smoothly
+        // If swiping with a finger, animate the bar to catch up smoothly
         if (tabOffset.value !== position * TAB_WIDTH) {
             tabOffset.value = withSpring(position * TAB_WIDTH, NATIVE_SPRING_CONFIG);
         }
@@ -93,7 +81,7 @@ export default function SpellList({ groupedSpells }: Props) {
 
     const handleSpellPress = useCallback((spell: Spell) => {
         router.push(`/(tabs)/library/spells/${encodeURIComponent(spell.name)}`);
-    }, [router]); // 💡 Depends only on router
+    }, [router]); // Depends only on router
 
     const renderItem: ListRenderItem<Spell> = useCallback(({ item }) => {
         return (
@@ -121,7 +109,7 @@ export default function SpellList({ groupedSpells }: Props) {
                         );
                     })}
                 </View>
-                {/* 💡 The Smooth Animated Sliding Line */}
+                {/* The Smooth Animated Sliding Line */}
                 <Animated.View style={[styles.indicator, animatedIndicatorStyle]} />
             </View>
             <PagerView
@@ -181,7 +169,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
     },
     tabBar: {
         flexDirection: 'row',
@@ -235,9 +223,19 @@ const styles = StyleSheet.create({
         padding: 16
     },
     spellCard: {
-        backgroundColor: '#fff', padding: 20, marginBottom: 12, borderRadius: 8, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 1.41
+        backgroundColor: '#fff', 
+        padding: 20, 
+        marginBottom: 12, 
+        borderRadius: 8, 
+        elevation: 2, 
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 1 }, 
+        shadowOpacity: 0.2, 
+        shadowRadius: 1.41
     },
     spellName: {
-        fontSize: 16, fontWeight: 'bold', color: '#333'
+        fontSize: 16, 
+        fontWeight: 'bold', 
+        color: '#333'
     },
 });
