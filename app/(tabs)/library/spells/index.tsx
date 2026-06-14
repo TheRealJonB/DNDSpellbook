@@ -49,7 +49,6 @@ export default function SpellsScreen() {
           onSearchChange={setSearchQuery}
           filterActive={filterActive}
           onFilterPress={handleFilterPress}
-          onBack={() => router.push('/(tabs)/library/spells')}
         />
         <LoadingSpinner message="Loading spells..." />
       </ScreenContainer>
@@ -63,7 +62,6 @@ export default function SpellsScreen() {
         onSearchChange={setSearchQuery}
         filterActive={filterActive}
         onFilterPress={handleFilterPress}
-        onBack={() => router.back()}
       />
       <SpellList
         groupedSpells={groupedSpells}

@@ -11,16 +11,15 @@ interface Props {
   onSearchChange: (query: string) => void;
   filterActive: boolean;
   onFilterPress: () => void;
-  onBack: () => void;
 }
 
-export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, onFilterPress, onBack }: Props) {
+export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, onFilterPress }: Props) {
 
   const router = useRouter();
   return (
     <View style={styles.headerContainer}>
       <Pressable onPress={() => router.back()}>
-        <Text style={styles.backText}>← Library</Text>
+        <Text style={styles.backText}>huh?</Text>
       </Pressable>
       <View style={styles.searchContainer}>
         <Ionicons

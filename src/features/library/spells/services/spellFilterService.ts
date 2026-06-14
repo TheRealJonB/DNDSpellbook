@@ -1,7 +1,7 @@
-import { Spell } from '../models/Spell';
+import { LightSpell } from '../models/Spell';
 import { FilterState } from '../store/filterStore';
 
-export function applyFilters(spells: Spell[], filters: FilterState): Spell[] {
+export function applyFilters(spells: LightSpell[], filters: FilterState): LightSpell[] {
   return spells.filter(spell => {
 
     // level — OR within category
