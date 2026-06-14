@@ -1,10 +1,10 @@
 import spellsData from '../data/spells.json';
-import { Spell } from '../models/Spell';
-import { getSpellCount, getSpellDataVersion, initSpellTable, loadSpells, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
+import { LightSpell, Spell, SpellHeavyDetails } from '../models/Spell';
+import { getSpellCount, getSpellDataVersion, initSpellTable, loadFullSpell, loadLightSpells, loadSpellHeavyDetails, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
 const SPELL_DATA_VERSION = 1;
 
-export async function initializeSpells(): Promise<Spell[]> {
+export async function initializeSpells() {
   await initSpellTable();
 
   const count = await getSpellCount();
@@ -17,8 +17,16 @@ export async function initializeSpells(): Promise<Spell[]> {
     // console.log('Spells in database after seed:', await getSpellCount());
     // console.log('Seeding complete');
   }
+}
 
-  const spells = await loadSpells();
-  // console.log('loadSpells returned:', spells.length);
-  return spells;
+export async function getAllLightSpells(): Promise<LightSpell[]> {
+  return await loadLightSpells();
+}
+
+export async function getSpellHeavyDetails(rowid: number): Promise<SpellHeavyDetails | null> {
+  return await loadSpellHeavyDetails(rowid);
+}
+
+export async function getFullSpell(rowid: number): Promise<Spell | null> {
+  return await loadFullSpell(rowid);
 }

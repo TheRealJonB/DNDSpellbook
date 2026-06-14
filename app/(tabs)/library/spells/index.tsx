@@ -16,7 +16,7 @@ import { spacing } from '../../../../src/shared/theme/spacing';
 
 export default function SpellsScreen() {
   const router = useRouter();
-  const { spells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
+  const { lightSpells: ALL_SPELLS, isLoading: spellsLoading } = useSpells();
   const { filters } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 300);

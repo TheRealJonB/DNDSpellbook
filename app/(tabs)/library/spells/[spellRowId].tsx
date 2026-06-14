@@ -1,7 +1,11 @@
+import { Spell } from '@/src/features/library/spells/models/Spell';
+import { getSpellHeavyDetails } from '@/src/features/library/spells/services/spellSyncService';
+import { useSpells } from '@/src/features/library/spells/store/SpellContext';
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
+import LoadingSpinner from '@/src/shared/components/ui/LoadingSpinner';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSpells } from '../../../../src/features/library/spells/store/SpellContext';
 import { colors } from '../../../../src/shared/theme/colors';
 import { spacing } from '../../../../src/shared/theme/spacing';
 import { typography } from '../../../../src/shared/theme/typography';
@@ -9,11 +13,50 @@ import { typography } from '../../../../src/shared/theme/typography';
 
 
 export default function SpellDetailScreen() {
-  const { spellName } = useLocalSearchParams<{ spellName: string }>();
   const router = useRouter();
-  const { getSpellByName } = useSpells();
-  const spell = getSpellByName(decodeURIComponent(spellName ?? ''));
+  const { lightSpells, isLoading } = useSpells();
+  const { spellRowId } = useLocalSearchParams<{ spellRowId: string }>();
 
+
+  const [spell, setSpell] = useState<Spell | null>(null);
+  const [isHeavyLoading, setIsHeavyLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadSpellData() {
+      if (!spellRowId) return;
+
+      const spellId = Number(spellRowId);
+      const lightSpell = lightSpells.find(s => s.rowid === spellId);
+
+      if (!lightSpell) return;
+
+      try {
+        const heavyDetails = await getSpellHeavyDetails(spellId);
+
+        if (heavyDetails) {
+          setSpell({
+            ...lightSpell,
+            ...heavyDetails,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load heavy spell text', error);
+        setError('Failed to load spell.');
+      } finally {
+        setIsHeavyLoading(false);
+      }
+    }
+    loadSpellData();
+  }, [spellRowId, lightSpells]);
+
+  if (isLoading || isHeavyLoading) {
+    return (
+      <ScreenContainer>
+        <LoadingSpinner message="Loading spell..." />
+      </ScreenContainer>
+    );
+  }
 
   if (!spell) {
     return (
@@ -22,6 +65,16 @@ export default function SpellDetailScreen() {
       </View>
     );
   }
+
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>There was an error</Text>
+      </View>
+    );
+  }
+
 
   const schoolColor = colors.school[spell.school] ?? colors.accentLight;
 
@@ -125,7 +178,7 @@ function Tag({ label }: { label: string }) {
 }
 
 const styles = StyleSheet.create({
-    addButton: {
+  addButton: {
     borderColor: colors.borderLight,
     borderRadius: 6,
     borderWidth: 0.5,

@@ -1,48 +1,49 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Spell } from '../models/Spell';
-import { initializeSpells } from '../services/spellSyncService';
+import { LightSpell } from '../models/Spell';
+import { getAllLightSpells, initializeSpells } from '../services/spellSyncService';
 
 interface SpellContextType {
-  spells: Spell[];
+  lightSpells: LightSpell[];
   isLoading: boolean;
-  getSpellByName: (name: string) => Spell | undefined;
 }
 
-const SpellContext = createContext<SpellContextType>({
-  spells: [],
-  isLoading: true,
-  getSpellByName: () => undefined,
-});
+const SpellContext = createContext<SpellContextType | undefined>(undefined);
+
 
 export function SpellProvider({ children }: { children: ReactNode }) {
-  const [spells, setSpells] = useState<Spell[]>([]);
+  const [lightSpells, setSpells] = useState<LightSpell[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    initializeSpells()
-      .then(loaded => {
-        // console.log('SpellContext received:', loaded.length);
-        // console.log('First spell:', loaded[0]?.name);
-        setSpells(loaded);
+    async function loadAppData() {
+      try {
+        await initializeSpells();
+
+        const loadedSpells = await getAllLightSpells();
+
+        setSpells(loadedSpells);
+      } catch (err) {
+        console.error('Failed to initialize spells:', err);
+      } finally {
         setIsLoading(false);
-      })
-      .catch(err => {
-        // console.error('Failed to initialize spells:', err);
-        setIsLoading(false);
-      });
+      }
+    }
+
+    loadAppData();
   }, []);
 
-  function getSpellByName(name: string): Spell | undefined {
-    return spells.find(s => s.name.toLowerCase() === name.toLowerCase());
-  }
-
   return (
-    <SpellContext.Provider value={{ spells, isLoading, getSpellByName }}>
+    <SpellContext.Provider value={{ lightSpells, isLoading }}>
       {children}
     </SpellContext.Provider>
   );
 }
 
 export function useSpells() {
-  return useContext(SpellContext);
+  const context = useContext(SpellContext);
+  if (context === undefined) {
+    throw new Error('useSpells must be used within a SpellProvider');
+  }
+  
+  return context;
 }

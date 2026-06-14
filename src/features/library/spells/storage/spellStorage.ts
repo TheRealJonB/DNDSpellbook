@@ -1,5 +1,5 @@
 import { getDatabase } from '@/src/shared/storage/storageClient';
-import { Spell } from '../models/Spell';
+import { LightSpell, Spell, SpellHeavyDetails } from '../models/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();
@@ -71,29 +71,27 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
   });
 }
 
-export async function loadSpells(): Promise<Spell[]> {
+export async function loadLightSpells(): Promise<LightSpell[]> {
   const db = await getDatabase();
-  const rows = await db.getAllAsync<Record<string, unknown>>(
-    'SELECT * FROM spells ORDER BY level ASC, name ASC'
+  const lightSpells = await db.getAllAsync<Record<string, unknown>>(`
+  SELECT 
+    rowid, name, source, level, school, classes, casting_time_abbr, range, 
+    duration, component_verbal, component_somatic, component_material, 
+    component_gold_required, component_gold_consumed, damage_type_array, saving_throw_array, 
+    aoe_shape_array, spell_attack, ritual
+  FROM spells`
   );
-  // console.log('Raw rows from SELECT:', rows.length);
-  if (rows.length > 0) {
-    // console.log('Sample row keys:', Object.keys(rows[0]));
-    // console.log('Sample row:', JSON.stringify(rows[0]));
-  }
-  return rows.map(row => ({
+
+  return lightSpells.map(row => ({
+    rowid: row.rowid as number,
     name: row.name as string,
     source: row.source as string,
     level: row.level as number,
     school: row.school as string,
     classes: JSON.parse(row.classes as string),
-    castingTime: row.casting_time as string,
     castingTimeAbbr: row.casting_time_abbr as string,
     range: row.range as string,
-    components: row.components as string,
     duration: row.duration as string,
-    description: row.description as string,
-    upgrade: row.upgrade as string | null,
     componentVerbal: row.component_verbal === 1,
     componentSomatic: row.component_somatic === 1,
     componentMaterial: row.component_material === 1,
@@ -105,6 +103,63 @@ export async function loadSpells(): Promise<Spell[]> {
     spellAttack: row.spell_attack === 1,
     ritual: row.ritual === 1,
   }));
+}
+
+export async function loadSpellHeavyDetails(rowid: number): Promise<SpellHeavyDetails | null> {
+  const db = await getDatabase();
+  // FIXED: Added "AS castingTime" alias so the object maps directly to the TypeScript interface shape
+  const spellHeavyDetails = await db.getFirstAsync<SpellHeavyDetails>(
+    `SELECT casting_time AS castingTime, description, upgrade, components 
+     FROM spells 
+     WHERE rowid = ?`,
+    [rowid]
+  );
+
+  if (!spellHeavyDetails) {
+    return null;
+  }
+
+  return spellHeavyDetails;
+}
+
+export async function loadFullSpell(rowid: number): Promise<Spell | null> {
+  const db = await getDatabase();
+  const row = await db.getFirstAsync<Record<string, unknown>>(
+    `SELECT * FROM spells WHERE rowid = ?`,
+    [rowid]
+  );
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    rowid: row.rowid as number,
+    name: row.name as string,
+    source: row.source as string,
+    level: row.level as number,
+    school: row.school as string,
+    classes: JSON.parse(row.classes as string),
+    castingTimeAbbr: row.casting_time_abbr as string,
+    range: row.range as string,
+    duration: row.duration as string,
+    componentVerbal: row.component_verbal === 1,
+    componentSomatic: row.component_somatic === 1,
+    componentMaterial: row.component_material === 1,
+    componentGoldRequired: row.component_gold_required === 1,
+    componentGoldConsumed: row.component_gold_consumed === 1,
+    damageTypeArray: JSON.parse(row.damage_type_array as string),
+    savingThrowArray: JSON.parse(row.saving_throw_array as string),
+    aoeShapeArray: JSON.parse(row.aoe_shape_array as string),
+    spellAttack: row.spell_attack === 1,
+    ritual: row.ritual === 1,
+
+    // FIXED: Changed row.castingTime to row.casting_time to correctly pull the snake_case database value
+    castingTime: row.casting_time as string,
+    description: row.description as string,
+    upgrade: row.upgrade as string | null,
+    components: row.components as string,
+  };
 }
 
 export async function getSpellCount(): Promise<number> {
