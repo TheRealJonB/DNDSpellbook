@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
+
 
 interface Props {
   searchQuery: string;
@@ -13,9 +15,11 @@ interface Props {
 }
 
 export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, onFilterPress, onBack }: Props) {
+
+  const router = useRouter();
   return (
     <View style={styles.headerContainer}>
-      <Pressable onPress={onBack}>
+      <Pressable onPress={() => router.back()}>
         <Text style={styles.backText}>← Library</Text>
       </Pressable>
       <View style={styles.searchContainer}>

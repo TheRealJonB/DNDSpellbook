@@ -5,7 +5,7 @@ export default function SpellsLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="filters" />
-      <Stack.Screen name="[spellName]" />
+      <Stack.Screen name="[spellRowId]" />
     </Stack>
   );
 }

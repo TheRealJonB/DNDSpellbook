@@ -15,7 +15,7 @@ import Animated, {
     withSpring,
     withTiming
 } from 'react-native-reanimated';
-import { Spell } from '../models/Spell';
+import { LightSpell } from '../models/Spell';
 import SpellCard from './SpellCard';
 
 
@@ -31,7 +31,7 @@ const NATIVE_SPRING_CONFIG = {
 };
 
 interface Props {
-    groupedSpells: Spell[][];
+    groupedSpells: LightSpell[][];
 }
 
 export default function SpellList({ groupedSpells }: Props) {
@@ -79,11 +79,11 @@ export default function SpellList({ groupedSpells }: Props) {
         transform: [{ translateX: tabOffset.value }],
     }));
 
-    const handleSpellPress = useCallback((spell: Spell) => {
-        router.push(`/(tabs)/library/spells/${encodeURIComponent(spell.name)}`);
+    const handleSpellPress = useCallback((spell: LightSpell) => {
+        router.push(`/(tabs)/library/spells/${spell.rowid}`);
     }, [router]); // Depends only on router
 
-    const renderItem: ListRenderItem<Spell> = useCallback(({ item }) => {
+    const renderItem: ListRenderItem<LightSpell> = useCallback(({ item }) => {
         return (
             <SpellCard
                 spell={item}
@@ -124,7 +124,7 @@ export default function SpellList({ groupedSpells }: Props) {
                     return (
                         <View key={SPELL_TABS[index]} style={styles.page} collapsable={false}>
                             {shouldRender ? (
-                                <FlashList<Spell>
+                                <FlashList<LightSpell>
                                     data={spells}
                                     renderItem={renderItem}
                                     keyExtractor={(item) => item.name}
@@ -232,10 +232,5 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 1 }, 
         shadowOpacity: 0.2, 
         shadowRadius: 1.41
-    },
-    spellName: {
-        fontSize: 16, 
-        fontWeight: 'bold', 
-        color: '#333'
     },
 });

@@ -3,11 +3,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
-import { Spell } from '../models/Spell';
+import { LightSpell } from '../models/Spell';
 
 interface Props {
-  onPress: (spell: Spell) => void;
-  spell: Spell;
+  onPress: (spell: LightSpell) => void;
+  spell: LightSpell;
 }
 
 function SpellCard({ onPress, spell }: Props) {
