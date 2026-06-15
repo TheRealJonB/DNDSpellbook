@@ -38,7 +38,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
     
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    const snapPoints = useMemo(() => ['80%'], []);
+    const snapPoints = useMemo(() => ['90%'], []);
 
     // Expose specific functions to the parent component
     useImperativeHandle(ref, () => ({

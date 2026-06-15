@@ -21,11 +21,16 @@ import LibraryCategoryBottomSheet, { LibraryCategoryBottomSheetRef } from '@/src
 import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
 
 
-const libraryCategories = [ 'spells', 'armor','items'];
+const libraryCategories = [
+    { label: '🔥 Spells', value: 'spells' },
+    { label: '⚔️ Weapons & Armor', value: 'armor' },
+    { label: '🧪 Magic Items', value: 'items' },
+    // backgrounds, classes, equipment, feats, misc, mundane items (split this up probably), species
+];
 
 
 export default function LibraryScreen() {
-  const [libraryCategory, setLibraryCategory] = useState('spells');
+  const [currentCategory, setCurrentCategory] = useState('spells');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 300);
 
@@ -66,7 +71,7 @@ export default function LibraryScreen() {
 
   
   const handleCategoryChange = (newCategory: string) => {
-    setLibraryCategory(newCategory);
+    setCurrentCategory(newCategory);
   };
 
   return (
@@ -90,6 +95,7 @@ export default function LibraryScreen() {
         sheetTitle="Choose your Library Category"
         categories={libraryCategories}
         onApplyCategory={handleCategoryChange}
+        currentCategory={currentCategory}
       />
       
 
