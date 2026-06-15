@@ -46,11 +46,6 @@ export const styles = StyleSheet.create({
     applyButtonPressed: {
         backgroundColor: '#0056b3', // Darkens the button slightly when actively pressed
     },
-    applyButtonText: { 
-        color: '#fff', 
-        fontSize: 16, 
-        fontWeight: 'bold' 
-    },
 
     
 
@@ -60,9 +55,9 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         paddingVertical: spacing.md,
     },
-    applyText: {
+    applyFilters: {
         color: colors.textPrimary,
-        fontSize: typography.sizes.md,
+        fontSize: typography.sizes.lg,
         fontWeight: typography.weights.bold,
     },
     chip: {

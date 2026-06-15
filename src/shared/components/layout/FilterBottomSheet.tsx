@@ -135,7 +135,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                         bottomSheetRef.current?.close();
                     }}
                 >
-                    <Text style={styles.applyButtonText}>Apply Filters</Text>
+                    <Text style={styles.applyFilters}>Apply Filters</Text>
                 </Pressable>
             </View>
 
