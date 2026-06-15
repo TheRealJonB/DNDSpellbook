@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
@@ -10,19 +9,29 @@ interface Props {
   onSearchChange: (query: string) => void;
   filterActive: boolean;
   openFilterSheet: () => void;
+  openCategorySheet: () => void;
 }
 
 export default function SpellListHeader(
-  { searchQuery, onSearchChange, filterActive, openFilterSheet }: Props) {
+  { searchQuery, onSearchChange, filterActive, openFilterSheet, openCategorySheet }: Props) {
 
-
-
-  const router = useRouter();
   return (
     <View style={styles.headerContainer}>
-      <Pressable onPress={() => router.back()}>
-        <Text style={styles.backText}>huh?</Text>
+
+
+      <Pressable
+        onPress={openCategorySheet}
+        style={[styles.filterButton, filterActive && styles.filterButtonActive]}
+      >
+        <Ionicons
+          name="options-outline"
+          size={20}
+          color={filterActive ? colors.accentLight : colors.textMuted}
+        />
+        {filterActive && <View style={styles.filterDot} />}
       </Pressable>
+
+
       <View style={styles.searchContainer}>
         <Ionicons
           name="search-outline"
@@ -41,6 +50,8 @@ export default function SpellListHeader(
           clearButtonMode="while-editing"
         />
       </View>
+
+
       <Pressable
         onPress={openFilterSheet}
         style={[styles.filterButton, filterActive && styles.filterButtonActive]}
@@ -52,6 +63,7 @@ export default function SpellListHeader(
         />
         {filterActive && <View style={styles.filterDot} />}
       </Pressable>
+      
     </View>
   );
 }

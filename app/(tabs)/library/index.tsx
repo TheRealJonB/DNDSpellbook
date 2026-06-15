@@ -5,8 +5,7 @@ import { groupSpellsByLevel } from '@/src/features/library/spells/utils/groupSpe
 import { searchSpells } from '@/src/features/library/spells/utils/spellSearch';
 import { useDebounce } from '@/src/shared/hooks/useDebounce';
 import { useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import { StyleSheet } from 'react-native';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
@@ -18,17 +17,15 @@ import { buildFilterCategoriesFromData } from '@/src/shared/utils/filterConstruc
 
 import { SPELL_FILTERS } from '@/src/features/library/spells/constants/spellFilters';
 import FilterBottomSheet, { FilterBottomSheetRef } from '@/src/shared/components/layout/FilterBottomSheet';
+import LibraryCategoryBottomSheet, { LibraryCategoryBottomSheetRef } from '@/src/shared/components/layout/LibraryCategoryBottomSheet';
 import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
 
-const dropdownData = [
-  { label: '🔥 Spells', value: 'spells' },
-  { label: '⚔️ Weapons & Armor', value: 'armor' },
-  { label: '🧪 Magic Items', value: 'items' },
-  // backgrounds, classes, equipment, feats, misc, mundane items (split this up probably), species
-];
+
+const libraryCategories = [ 'spells', 'armor','items'];
+
 
 export default function LibraryScreen() {
-  const [libraryType, setLibraryType] = useState('spells');
+  const [libraryCategory, setLibraryCategory] = useState('spells');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 300);
 
@@ -48,8 +45,15 @@ export default function LibraryScreen() {
   },  [searchedAndFilteredSpells] );
 
     const filterBottomSheetRef = useRef<FilterBottomSheetRef>(null);
-    const handleOpenPress = () => filterBottomSheetRef.current?.open();
-    const handleClosePress = () => filterBottomSheetRef.current?.close();
+    const handleOpenFilterSheet = () => filterBottomSheetRef.current?.open();
+    const handleCloseFilterSheet = () => filterBottomSheetRef.current?.close();
+
+    const categoryBottomSheetRef = useRef<LibraryCategoryBottomSheetRef>(null);
+    const handleOpenCategorySheet = () => {
+      console.log('do the roar');
+      categoryBottomSheetRef.current?.open();
+    }
+    const handleCloseCategorySheet = () => categoryBottomSheetRef.current?.close();
 
 
   // figure out how to get this to apply to any active filters
@@ -62,30 +66,18 @@ export default function LibraryScreen() {
 
   
   const handleCategoryChange = (newCategory: string) => {
-    setLibraryType(newCategory);
+    setLibraryCategory(newCategory);
   };
 
   return (
     <ScreenContainer>
-      <View style={styles.dropdownContainer}>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={dropdownData}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Category"
-          value={libraryType}
-          onChange={handleCategoryChange}
-        />
-      </View>
 
       <SpellListHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         filterActive={isFilterActive}
-        openFilterSheet={handleOpenPress}
+        openFilterSheet={handleOpenFilterSheet}
+        openCategorySheet={handleOpenCategorySheet}
       />
 
       <SpellList
@@ -93,7 +85,14 @@ export default function LibraryScreen() {
       />
       
 
-      // bottom sheet needs to be below main list of items
+      <LibraryCategoryBottomSheet
+        ref={categoryBottomSheetRef}
+        sheetTitle="Choose your Library Category"
+        categories={libraryCategories}
+        onApplyCategory={handleCategoryChange}
+      />
+      
+
       <FilterBottomSheet
         ref={filterBottomSheetRef}
         sheetTitle="Refine Your Search"
