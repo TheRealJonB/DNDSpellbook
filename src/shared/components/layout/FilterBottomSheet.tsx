@@ -26,16 +26,28 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
     useEffect(() => {
         setLocalFilters(filters);
     }, [filters]);
-    const handleToggleOption = (groupId: string, optionId: string) => {
-        const updated = localFilters.map(group => {
-            if (group.id !== groupId) return group;
+    const handleToggleOption = (filterCategoryId: string, optionId: string) => {
+        const updated = localFilters.map(filterCategory => {
+            if (filterCategory.id !== filterCategoryId) return filterCategory;
             return {
-                ...group,
-                options: group.options.map(opt =>
+                ...filterCategory,
+                options: filterCategory.options.map(opt =>
                     opt.id === optionId ? { ...opt, isSelected: !opt.isSelected } : opt
                 )
             };
         });
+        setLocalFilters(updated);
+    }
+    const handleClearFilters = () => {
+        const updated = localFilters.map(filterCategory => {
+            return {
+                ...filterCategory,
+                options: filterCategory.options.map(option => ({
+                    ...option,
+                    isSelected: false
+                }))
+            };
+        })
         setLocalFilters(updated);
     }
 
@@ -75,7 +87,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                     <Text style={styles.closeText}>← Back</Text>
                 </Pressable>
                 <Text style={styles.title}>Filter Spells</Text>
-                <Pressable onPress={() => onApplyFilters(filters)}>
+                <Pressable onPress={handleClearFilters}>
                     <Text style={styles.clearText}>Clear all</Text>
                 </Pressable>
             </View>

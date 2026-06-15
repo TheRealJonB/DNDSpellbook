@@ -43,7 +43,7 @@ export const buildFilterCategoriesFromData = (filterData: FilterData[]): FilterC
 
 export const resetFilters = (filterCategories: FilterCategory[]) => {
   filterCategories.map((filterCategory) => (
-    filterCategory.options.map((item) => ({
+    filterCategory.options.map(item => ({
       ...item,
       isSelected: false, // Baseline dynamic state
     }))
