@@ -4,7 +4,7 @@ import { useSpellsData } from '@/src/features/library/spells/hooks/useSpellsData
 import { groupSpellsByLevel } from '@/src/features/library/spells/utils/groupSpellsByLevel';
 import { searchSpells } from '@/src/features/library/spells/utils/spellSearch';
 import { useDebounce } from '@/src/shared/hooks/useDebounce';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
@@ -17,6 +17,7 @@ import { FilterCategory } from '@/src/shared/types/filters';
 import { buildFilterCategoriesFromData } from '@/src/shared/utils/filterConstructor';
 
 import { SPELL_FILTERS } from '@/src/features/library/spells/constants/spellFilters';
+import FilterBottomSheet, { FilterBottomSheetRef } from '@/src/shared/components/layout/FilterBottomSheet';
 import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
 
 const dropdownData = [
@@ -46,6 +47,9 @@ export default function LibraryScreen() {
     return groupSpellsByLevel(searchedAndFilteredSpells);
   },  [searchedAndFilteredSpells] );
 
+    const filterBottomSheetRef = useRef<FilterBottomSheetRef>(null);
+    const handleOpenPress = () => filterBottomSheetRef.current?.open();
+    const handleClosePress = () => filterBottomSheetRef.current?.close();
 
 
   // figure out how to get this to apply to any active filters
@@ -81,13 +85,20 @@ export default function LibraryScreen() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         filterActive={isFilterActive}
-        category={libraryType}
-        handleApplyFilters={setActiveSpellFilters}
-        filterCategories={activeSpellFilters}
+        openFilterSheet={handleOpenPress}
       />
 
       <SpellList
         groupedSpells={groupedSpells}
+      />
+      
+
+      // bottom sheet needs to be below main list of items
+      <FilterBottomSheet
+        ref={filterBottomSheetRef}
+        sheetTitle="Refine Your Search"
+        filters={activeSpellFilters}
+        onApplyFilters={setActiveSpellFilters}
       />
     </ScreenContainer>
   );

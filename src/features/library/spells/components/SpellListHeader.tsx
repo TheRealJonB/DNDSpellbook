@@ -1,8 +1,5 @@
-import FilterBottomSheet, { FilterBottomSheetRef } from '@/src/shared/components/layout/FilterBottomSheet';
-import { FilterCategory } from '@/src/shared/types/filters';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
@@ -12,15 +9,12 @@ interface Props {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filterActive: boolean;
-  handleApplyFilters: (selectedCategories: FilterCategory[]) => void; 
-  filterCategories: FilterCategory[];
-  category: string;
+  openFilterSheet: () => void;
 }
 
-export default function SpellListHeader({ searchQuery, onSearchChange, filterActive, handleApplyFilters, filterCategories, category }: Props) {
-  const filterBottomSheetRef = useRef<FilterBottomSheetRef>(null);
-  const handleOpenPress = () => filterBottomSheetRef.current?.open();
-  const handleClosePress = () => filterBottomSheetRef.current?.close();
+export default function SpellListHeader(
+  { searchQuery, onSearchChange, filterActive, openFilterSheet }: Props) {
+
 
 
   const router = useRouter();
@@ -48,7 +42,7 @@ export default function SpellListHeader({ searchQuery, onSearchChange, filterAct
         />
       </View>
       <Pressable
-        onPress={handleOpenPress}
+        onPress={openFilterSheet}
         style={[styles.filterButton, filterActive && styles.filterButtonActive]}
       >
         <Ionicons
@@ -58,12 +52,6 @@ export default function SpellListHeader({ searchQuery, onSearchChange, filterAct
         />
         {filterActive && <View style={styles.filterDot} />}
       </Pressable>
-      <FilterBottomSheet
-        ref={filterBottomSheetRef}
-        sheetTitle="Refine Your Search"
-        filters={filterCategories}
-        onApplyFilters={handleApplyFilters}
-      />
     </View>
   );
 }
