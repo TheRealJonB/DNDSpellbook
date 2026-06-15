@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@gorhom/bottom-sheet": "^5.2.14",
     "@shopify/flash-list": "2.0.2",
     "expo": "^56.0.8",
     "expo-constants": "~56.0.16",
@@ -31,6 +32,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.31.1",
     "react-native-pager-view": "8.0.1",
     "react-native-reanimated": "4.3.1",

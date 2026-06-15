@@ -1,81 +1,89 @@
 import SpellList from '@/src/features/library/spells/components/SpellList';
 import SpellListHeader from '@/src/features/library/spells/components/SpellListHeader';
-import { applyFilters } from '@/src/features/library/spells/services/spellFilterService';
-import { searchSpells } from '@/src/features/library/spells/services/spellSearchService';
-import { useFilters } from '@/src/features/library/spells/store/FilterContext';
-import { isFilterActive } from '@/src/features/library/spells/store/filterStore';
-import { useSpells } from '@/src/features/library/spells/store/SpellContext';
-import { groupSpellsByLevel } from '@/src/features/library/spells/utils/spellGrouping';
+import { useSpellsData } from '@/src/features/library/spells/hooks/useSpellsData';
+import { groupSpellsByLevel } from '@/src/features/library/spells/utils/groupSpellsByLevel';
+import { searchSpells } from '@/src/features/library/spells/utils/spellSearch';
 import { useDebounce } from '@/src/shared/hooks/useDebounce';
-import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
 import { colors } from '../../../src/shared/theme/colors';
 import { spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
 
-const CONTENT_TYPES = [
-  {
-    key: 'spells',
-    label: 'Spells',
-    description: 'Browse all spells',
-    available: true,
-  },
-  {
-    key: 'magic-items',
-    label: 'Magic Items',
-    description: 'Coming soon',
-    available: false,
-  },
-  {
-    key: 'species',
-    label: 'Species',
-    description: 'Coming soon',
-    available: false,
-  },
-  {
-    key: 'classes',
-    label: 'Classes',
-    description: 'Coming soon',
-    available: false,
-  },
-] as const;
+// Import our shared types and utility engine
+import { FilterCategory } from '@/src/shared/types/filters';
+import { buildFilterCategoriesFromData } from '@/src/shared/utils/filterConstructor';
+
+import { SPELL_FILTERS } from '@/src/features/library/spells/constants/spellFilters';
+import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
+
+const dropdownData = [
+  { label: '🔥 Spells', value: 'spells' },
+  { label: '⚔️ Weapons & Armor', value: 'armor' },
+  { label: '🧪 Magic Items', value: 'items' },
+  // backgrounds, classes, equipment, feats, misc, mundane items (split this up probably), species
+];
 
 export default function LibraryScreen() {
-  const router = useRouter();
-  const { lightSpells: LIGHT_SPELLS, isLoading: spellsLoading } = useSpells();
-  const { filters } = useFilters();
+  const [libraryType, setLibraryType] = useState('spells');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 300);
-  const filterActive = isFilterActive(filters);
 
-  const filtered = useMemo(() =>
-    applyFilters(LIGHT_SPELLS, filters),
-    [LIGHT_SPELLS, filters]
+  // repeat for armor, magic items, etc
+  const { lightSpells, isLoading } = useSpellsData();
+  const [activeSpellFilters, setActiveSpellFilters] = useState<FilterCategory[]>(() =>
+    buildFilterCategoriesFromData(SPELL_FILTERS)
   );
+  const filteredSpells = useMemo(() => {
+    return applyGenericFilters(lightSpells, activeSpellFilters);
+  },  [lightSpells, activeSpellFilters] );
+  const searchedAndFilteredSpells = useMemo(() => {
+    return searchSpells(filteredSpells, debouncedQuery);
+  }, [filteredSpells, debouncedQuery] );
+  const groupedSpells = useMemo(() => {
+    return groupSpellsByLevel(searchedAndFilteredSpells);
+  },  [searchedAndFilteredSpells] );
 
-  const searched = useMemo(() =>
-    searchSpells(filtered, debouncedQuery),
-    [filtered, debouncedQuery]
-  );
 
-  const groupedSpells = useMemo(() =>
-    groupSpellsByLevel(searched),
-    [searched]
-  );
 
-  function handleFilterPress() {
-    router.push('/(tabs)/library/spells/filters');
-  }
+  // figure out how to get this to apply to any active filters
+  // also reset filters when switching categories
+  const isFilterActive = useMemo(() => {
+    return activeSpellFilters.some((categoryGroup) =>
+      categoryGroup.options.some((option) => option.isSelected)
+    );
+  }, [activeSpellFilters]); // Re-evaluates instantly whenever a checkbox is flipped
+
+  
+  const handleCategoryChange = (newCategory: string) => {
+    setLibraryType(newCategory);
+  };
 
   return (
     <ScreenContainer>
+      <View style={styles.dropdownContainer}>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={dropdownData}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Category"
+          value={libraryType}
+          onChange={handleCategoryChange}
+        />
+      </View>
+
       <SpellListHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        filterActive={filterActive}
-        onFilterPress={handleFilterPress}
+        filterActive={isFilterActive}
+        category={libraryType}
+        handleApplyFilters={setActiveSpellFilters}
+        filterCategories={activeSpellFilters}
       />
 
       <SpellList
@@ -135,5 +143,51 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#121212', // Dark RPG theme
+  },
+  dropdownContainer: {
+    padding: 16,
+    backgroundColor: '#1e1e1e',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  dropdown: {
+    height: 50,
+    borderColor: '#444',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#2a2a2a',
+  },
+  placeholderStyle: {
+    color: '#aaa',
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  listContainer: {
+    padding: 16,
+  },
+  itemName: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  itemDesc: {
+    color: '#ccc',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  emptyText: {
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 40,
   },
 });

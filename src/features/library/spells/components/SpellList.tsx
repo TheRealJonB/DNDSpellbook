@@ -48,7 +48,7 @@ export default function SpellList({ groupedSpells }: Props) {
 
 
     const handleListLoaded = useCallback((index: number) => {
-        console.log(`rendering page ${index}`);
+        console.log(`rendering page ${index}`); // so I can see how fast things load
         if (index === maxLoadedTab && maxLoadedTab < SPELL_TABS.length - 1) {
             requestAnimationFrame(() => {
                 setMaxLoadedTab((prev) => prev + 1);
@@ -80,8 +80,8 @@ export default function SpellList({ groupedSpells }: Props) {
     }));
 
     const handleSpellPress = useCallback((spell: LightSpell) => {
-        router.push(`/(tabs)/library/spells/${spell.rowid}`);
-    }, [router]); // Depends only on router
+        router.push(`/(tabs)/library/${spell.rowid}`);
+    }, [router]);
 
     const renderItem: ListRenderItem<LightSpell> = useCallback(({ item }) => {
         return (
@@ -223,14 +223,14 @@ const styles = StyleSheet.create({
         padding: 16
     },
     spellCard: {
-        backgroundColor: '#fff', 
-        padding: 20, 
-        marginBottom: 12, 
-        borderRadius: 8, 
-        elevation: 2, 
-        shadowColor: '#000', 
-        shadowOffset: { width: 0, height: 1 }, 
-        shadowOpacity: 0.2, 
+        backgroundColor: '#fff',
+        padding: 20,
+        marginBottom: 12,
+        borderRadius: 8,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
         shadowRadius: 1.41
     },
 });

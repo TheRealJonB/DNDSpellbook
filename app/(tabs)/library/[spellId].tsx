@@ -1,56 +1,79 @@
 import { Spell } from '@/src/features/library/spells/models/Spell';
-import { getSpellHeavyDetails } from '@/src/features/library/spells/services/spellSyncService';
-import { useSpells } from '@/src/features/library/spells/store/SpellContext';
+import { getFullSpell } from '@/src/features/library/spells/services/spellSyncService';
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import LoadingSpinner from '@/src/shared/components/ui/LoadingSpinner';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../../../src/shared/theme/colors';
-import { spacing } from '../../../../src/shared/theme/spacing';
-import { typography } from '../../../../src/shared/theme/typography';
+import { colors } from '../../../src/shared/theme/colors';
+import { spacing } from '../../../src/shared/theme/spacing';
+import { typography } from '../../../src/shared/theme/typography';
 
 
 
 export default function SpellDetailScreen() {
   const router = useRouter();
-  const { lightSpells, isLoading } = useSpells();
-  const { spellRowId } = useLocalSearchParams<{ spellRowId: string }>();
+  const { spellId } = useLocalSearchParams<{ spellId: string }>();
 
 
   const [spell, setSpell] = useState<Spell | null>(null);
-  const [isHeavyLoading, setIsHeavyLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadSpellData() {
-      if (!spellRowId) return;
+      if (!spellId) return;
 
-      const spellId = Number(spellRowId);
-      const lightSpell = lightSpells.find(s => s.rowid === spellId);
+      const spellIdNumber = Number(spellId);
+      // const lightSpell = lightSpells.find(s => s.rowid === spellIdNumber);
 
-      if (!lightSpell) return;
+      // if (!lightSpell) return;
 
       try {
-        const heavyDetails = await getSpellHeavyDetails(spellId);
+        const fullSpell = await getFullSpell(spellIdNumber);
 
-        if (heavyDetails) {
-          setSpell({
-            ...lightSpell,
-            ...heavyDetails,
-          });
+        if (fullSpell) {
+          setSpell(fullSpell);
         }
       } catch (error) {
         console.error('Failed to load heavy spell text', error);
         setError('Failed to load spell.');
       } finally {
-        setIsHeavyLoading(false);
+        setIsLoading(false);
       }
     }
     loadSpellData();
-  }, [spellRowId, lightSpells]);
+  }, [spellId]);
 
-  if (isLoading || isHeavyLoading) {
+  // useEffect(() => {
+  //   async function loadSpellData() {
+  //     if (!spellId) return;
+
+  //     const spellIdNumber = Number(spellId);
+  //     const lightSpell = lightSpells.find(s => s.rowid === spellIdNumber);
+
+  //     if (!lightSpell) return;
+
+  //     try {
+  //       const heavyDetails = await getSpellHeavyDetails(spellIdNumber);
+
+  //       if (heavyDetails) {
+  //         setSpell({
+  //           ...lightSpell,
+  //           ...heavyDetails,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error('Failed to load heavy spell text', error);
+  //       setError('Failed to load spell.');
+  //     } finally {
+  //       setIsHeavyLoading(false);
+  //     }
+  //   }
+  //   loadSpellData();
+  // }, [spellId, lightSpells]);
+
+  if (isLoading) {
     return (
       <ScreenContainer>
         <LoadingSpinner message="Loading spell..." />
