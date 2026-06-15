@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { LayoutChangeEvent, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
@@ -10,13 +10,14 @@ interface Props {
   filterActive: boolean;
   openFilterSheet: () => void;
   openCategorySheet: () => void;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
 export default function SpellListHeader(
-  { searchQuery, onSearchChange, filterActive, openFilterSheet, openCategorySheet }: Props) {
+  { searchQuery, onSearchChange, filterActive, openFilterSheet, openCategorySheet, onLayout }: Props) {
 
   return (
-    <View style={styles.headerContainer}>
+    <View style={styles.headerContainer} onLayout={onLayout}>
 
 
       <Pressable
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingVertical: 12,
   },
   backText: {
     color: colors.accentLight,

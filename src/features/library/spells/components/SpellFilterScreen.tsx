@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
-import { EMPTY_FILTERS, FilterState } from '../store/filterStore';
+import { FilterState } from '../store/filterStore';
 
 interface Props {
   filters: FilterState;
@@ -41,17 +41,6 @@ export default function SpellFilterScreen({ filters, onFiltersChange, onClose, r
 
   return (
     <View style={styles.container}>
-
-      {/* sticky header */}
-      <View style={styles.header}>
-        <Pressable onPress={onClose} style={styles.closeButton}>
-          <Text style={styles.closeText}>← Back</Text>
-        </Pressable>
-        <Text style={styles.title}>Filter Spells</Text>
-        <Pressable onPress={() => onFiltersChange(EMPTY_FILTERS)}>
-          <Text style={styles.clearText}>Clear all</Text>
-        </Pressable>
-      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}

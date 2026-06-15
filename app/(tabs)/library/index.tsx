@@ -1,31 +1,28 @@
 import SpellList from '@/src/features/library/spells/components/SpellList';
 import SpellListHeader from '@/src/features/library/spells/components/SpellListHeader';
+import { SPELL_FILTERS } from '@/src/features/library/spells/constants/spellFilters';
 import { useSpellsData } from '@/src/features/library/spells/hooks/useSpellsData';
 import { groupSpellsByLevel } from '@/src/features/library/spells/utils/groupSpellsByLevel';
 import { searchSpells } from '@/src/features/library/spells/utils/spellSearch';
-import { useDebounce } from '@/src/shared/hooks/useDebounce';
-import { useMemo, useRef, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import ScreenContainer from '../../../src/shared/components/layout/ScreenContainer';
-import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
-import { typography } from '../../../src/shared/theme/typography';
-
-// Import our shared types and utility engine
-import { FilterCategory } from '@/src/shared/types/filters';
-import { buildFilterCategoriesFromData } from '@/src/shared/utils/filterConstructor';
-
-import { SPELL_FILTERS } from '@/src/features/library/spells/constants/spellFilters';
 import FilterBottomSheet, { FilterBottomSheetRef } from '@/src/shared/components/layout/FilterBottomSheet';
 import LibraryCategoryBottomSheet, { LibraryCategoryBottomSheetRef } from '@/src/shared/components/layout/LibraryCategoryBottomSheet';
+import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
+import { useDebounce } from '@/src/shared/hooks/useDebounce';
+import { colors } from '@/src/shared/theme/colors';
+import { spacing } from '@/src/shared/theme/spacing';
+import { typography } from '@/src/shared/theme/typography';
 import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
+import { buildFilterCategoriesFromData, FilterCategory } from '@/src/shared/utils/filters';
+import { useMemo, useRef, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const libraryCategories = [
-    { label: '🔥 Spells', value: 'spells' },
-    { label: '⚔️ Weapons & Armor', value: 'armor' },
-    { label: '🧪 Magic Items', value: 'items' },
-    // backgrounds, classes, equipment, feats, misc, mundane items (split this up probably), species
+  { label: '🔥 Spells', value: 'spells' },
+  { label: '⚔️ Weapons & Armor', value: 'armor' },
+  { label: '🧪 Magic Items', value: 'items' },
+  // backgrounds, classes, equipment, feats, misc, mundane items (split this up probably), species
 ];
 
 
@@ -41,24 +38,32 @@ export default function LibraryScreen() {
   );
   const filteredSpells = useMemo(() => {
     return applyGenericFilters(lightSpells, activeSpellFilters);
-  },  [lightSpells, activeSpellFilters] );
+  }, [lightSpells, activeSpellFilters]);
   const searchedAndFilteredSpells = useMemo(() => {
     return searchSpells(filteredSpells, debouncedQuery);
-  }, [filteredSpells, debouncedQuery] );
+  }, [filteredSpells, debouncedQuery]);
   const groupedSpells = useMemo(() => {
     return groupSpellsByLevel(searchedAndFilteredSpells);
-  },  [searchedAndFilteredSpells] );
+  }, [searchedAndFilteredSpells]);
 
-    const filterBottomSheetRef = useRef<FilterBottomSheetRef>(null);
-    const handleOpenFilterSheet = () => filterBottomSheetRef.current?.open();
-    const handleCloseFilterSheet = () => filterBottomSheetRef.current?.close();
+  const filterBottomSheetRef = useRef<FilterBottomSheetRef>(null);
+  const handleOpenFilterSheet = () => filterBottomSheetRef.current?.open();
+  const handleCloseFilterSheet = () => filterBottomSheetRef.current?.close();
 
-    const categoryBottomSheetRef = useRef<LibraryCategoryBottomSheetRef>(null);
-    const handleOpenCategorySheet = () => {
-      console.log('do the roar');
-      categoryBottomSheetRef.current?.open();
-    }
-    const handleCloseCategorySheet = () => categoryBottomSheetRef.current?.close();
+  const categoryBottomSheetRef = useRef<LibraryCategoryBottomSheetRef>(null);
+  const handleOpenCategorySheet = () => categoryBottomSheetRef.current?.open();
+  const handleCloseCategorySheet = () => categoryBottomSheetRef.current?.close();
+
+  const insets = useSafeAreaInsets();
+  const [headerLayoutHeight, setHeaderLayoutHeight] = useState(0);
+  const handleHeaderLayout = (event: any) => {
+    const { height } = event.nativeEvent.layout;
+    setHeaderLayoutHeight(height);
+  };
+  const absoluteTopInset = useMemo(() => {
+    console.log('top inset computed')
+    return insets.top + headerLayoutHeight;
+  }, [insets.top, headerLayoutHeight])
 
 
   // figure out how to get this to apply to any active filters
@@ -69,7 +74,7 @@ export default function LibraryScreen() {
     );
   }, [activeSpellFilters]); // Re-evaluates instantly whenever a checkbox is flipped
 
-  
+
   const handleCategoryChange = (newCategory: string) => {
     setCurrentCategory(newCategory);
   };
@@ -83,12 +88,13 @@ export default function LibraryScreen() {
         filterActive={isFilterActive}
         openFilterSheet={handleOpenFilterSheet}
         openCategorySheet={handleOpenCategorySheet}
+        onLayout={handleHeaderLayout}
       />
 
       <SpellList
         groupedSpells={groupedSpells}
       />
-      
+
 
       <LibraryCategoryBottomSheet
         ref={categoryBottomSheetRef}
@@ -96,14 +102,15 @@ export default function LibraryScreen() {
         categories={libraryCategories}
         onApplyCategory={handleCategoryChange}
         currentCategory={currentCategory}
+        topInset={absoluteTopInset}
       />
-      
+
 
       <FilterBottomSheet
         ref={filterBottomSheetRef}
-        sheetTitle="Refine Your Search"
         filters={activeSpellFilters}
         onApplyFilters={setActiveSpellFilters}
+        topInset={absoluteTopInset}
       />
     </ScreenContainer>
   );

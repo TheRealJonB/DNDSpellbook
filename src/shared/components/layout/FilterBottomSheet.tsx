@@ -1,16 +1,15 @@
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
-import { typography } from '../../theme/typography';
-import { FilterCategory } from '../../types/filters';
+import { styles } from '../../theme/components/bottomSheetStyles';
+import { FilterCategory } from '../../utils/filters';
+
 
 
 interface FilterBottomSheetProps {
-    sheetTitle: string;
     filters: FilterCategory[];
     onApplyFilters: (finalFilters: FilterCategory[]) => void;
+    topInset: number;
 }
 
 export interface FilterBottomSheetRef {
@@ -18,7 +17,11 @@ export interface FilterBottomSheetRef {
     close: () => void;
 }
 
-const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProps>(({ sheetTitle, filters, onApplyFilters }, ref) => {
+const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProps>(({ filters, onApplyFilters, topInset }, ref) => {
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+    const snapPoints = useMemo(() => ['100%'], []);
+
+
     const [localFilters, setLocalFilters] = useState<FilterCategory[]>(filters);
     useEffect(() => {
         setLocalFilters(filters);
@@ -28,45 +31,65 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
             if (group.id !== groupId) return group;
             return {
                 ...group,
-                options: group.options.map(opt => 
+                options: group.options.map(opt =>
                     opt.id === optionId ? { ...opt, isSelected: !opt.isSelected } : opt
                 )
             };
         });
         setLocalFilters(updated);
     }
-    
-    const bottomSheetRef = useRef<BottomSheet>(null);
 
-    const snapPoints = useMemo(() => ['90%'], []);
+    const renderBackdrop = useCallback(
+        (props: BottomSheetBackdropProps) => (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1} // Keeps backdrop hidden when sheet is closed
+                appearsOnIndex={0}      // Starts showing backdrop at first snap point
+                opacity={0.5}          // How dark the background gets (0.0 to 1.0)
+            />
+        ),
+        []
+    );
+
 
     // Expose specific functions to the parent component
     useImperativeHandle(ref, () => ({
-        open: () => {
-            bottomSheetRef.current?.expand();
-        },
-        close: () => {
-            bottomSheetRef.current?.close();
-        },
+        open: () => { bottomSheetRef.current?.present(); },
+        close: () => { bottomSheetRef.current?.close(); },
     }));
 
     return (
-        <BottomSheet
+        <BottomSheetModal
             ref={bottomSheetRef}
-            index={-1}
+            index={0}
             snapPoints={snapPoints}
+            backdropComponent={renderBackdrop}
+            topInset={topInset}
+            enableDynamicSizing={false}
             enablePanDownToClose={true}
         >
-            {/* Use BottomSheetScrollView so lists stay scrollable if they exceed 80% */}
-            <BottomSheetScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.sheetHeader}>{sheetTitle}</Text>
 
+            {/* sticky header */}
+            <View style={styles.header}>
+                <Pressable onPress={() => bottomSheetRef.current?.close()} style={styles.closeButton}>
+                    <Text style={styles.closeText}>← Back</Text>
+                </Pressable>
+                <Text style={styles.title}>Filter Spells</Text>
+                <Pressable onPress={() => onApplyFilters(filters)}>
+                    <Text style={styles.clearText}>Clear all</Text>
+                </Pressable>
+            </View>
+
+            {/* Use BottomSheetScrollView so lists stay scrollable if they exceed 80% */}
+            <BottomSheetScrollView
+                contentContainerStyle={styles.scrollContent}
+            >
                 {/* 4. Dynamically loop over whatever filter groups are passed in */}
                 {localFilters.map((group) => (
-                    <View key={group.id} style={styles.groupContainer}>
-                        <Text style={styles.groupTitle}>{group.title}</Text>
+                    <View key={group.id} style={styles.section}>
+                        <Text style={styles.sectionTitle}>{group.title}</Text>
 
-                        <View style={styles.optionsWrapper}>
+                        <View style={styles.chipRow}>
                             {/* Dynamically loop over changing option items inside this specific group */}
                             {group.options.map((option) => (
                                 /* 2. Swapped to Pressable with a dynamic style function */
@@ -74,16 +97,16 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                                     key={option.id}
                                     hitSlop={8} // Makes small chips easier to tap
                                     style={({ pressed }) => [
-                                        styles.optionChip,
-                                        option.isSelected && styles.optionChipSelected,
+                                        styles.chip,
+                                        option.isSelected && styles.chipSelected,
                                         pressed && styles.optionChipPressed, // Custom active feedback
                                     ]}
                                     onPress={() => handleToggleOption(group.id, option.id)}
                                 >
                                     <Text
                                         style={[
-                                            styles.optionText,
-                                            option.isSelected && styles.optionTextSelected,
+                                            styles.chipText,
+                                            option.isSelected && styles.chipSelectedText,
                                         ]}
                                     >
                                         {option.label}
@@ -94,19 +117,29 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                     </View>
                 ))}
 
-                <View style={styles.footerButtons}>
-                    <Pressable
-                        style={styles.applyButton}
-                        onPress={() => {
-                            onApplyFilters(localFilters);
-                            bottomSheetRef.current?.close();
-                        }}
-                    >
-                        <Text style={styles.applyButtonText}>Apply Filters</Text>
-                    </Pressable>
-                </View>
+                {/* ⚠️ CRITICAL STEP: Add a structural layout spacer here. 
+          This forces the scroll container to add empty space at the bottom 
+          so items can be scrolled high enough to clear your floating button layer. */}
+                <View style={{ height: 100 }} />
             </BottomSheetScrollView>
-        </BottomSheet>
+
+            <View style={localFloatingStyles.floatingContainer} pointerEvents="box-none">
+                <Pressable
+                    style={({ pressed }) => [
+                        styles.applyButton,
+                        pressed && styles.applyButtonPressed,
+                        localFloatingStyles.shadowEffect
+                    ]}
+                    onPress={() => {
+                        onApplyFilters(localFilters);
+                        bottomSheetRef.current?.close();
+                    }}
+                >
+                    <Text style={styles.applyButtonText}>Apply Filters</Text>
+                </Pressable>
+            </View>
+
+        </BottomSheetModal>
     );
 }
 );
@@ -124,126 +157,22 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 FilterBottomSheet.displayName = 'FilterBottomSheet';
 export default FilterBottomSheet;
 
-const styles = StyleSheet.create({
-    scrollContainer: { padding: 24, paddingBottom: 40 },
-    sheetHeader: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, color: '#111' },
-    groupContainer: { marginBottom: 24 },
-    groupTitle: { fontSize: 16, fontWeight: '600', color: '#666', marginBottom: 12, textTransform: 'uppercase' },
-    optionsWrapper: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-
-    // Chip Styles
-    optionChip: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#f0f0f0',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
+const localFloatingStyles = StyleSheet.create({
+    floatingContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 24,
+        paddingBottom: 100, // Adds padding for the phone's physical bottom indicator bar
+        backgroundColor: 'transparent', // Keeps background transparent so content scrolls underneath visually
     },
-    optionChipSelected: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
-    },
-    optionChipPressed: {
-        opacity: 0.7, // Replicating a slight fade, or you could do scale/color shifts
-    },
-    optionText: { fontSize: 14, color: '#333' },
-    optionTextSelected: { color: '#fff', fontWeight: '600' },
-
-    // Footer Button Styles
-    footerButtons: { marginTop: 16 },
-
-    applyButtonPressed: {
-        backgroundColor: '#0056b3', // Darkens the button slightly when actively pressed
-    },
-    applyButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-
-    applyButton: {
-        alignItems: 'center',
-        backgroundColor: colors.accent,
-        borderRadius: 8,
-        paddingVertical: spacing.md,
-    },
-    applyText: {
-        color: colors.textPrimary,
-        fontSize: typography.sizes.md,
-        fontWeight: typography.weights.bold,
-    },
-    chip: {
-        borderColor: colors.borderLight,
-        borderRadius: 20,
-        borderWidth: 0.5,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-    },
-    chipRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: spacing.sm,
-    },
-    chipSelected: {
-        backgroundColor: colors.chipSelected,
-        borderColor: colors.chipSelectedBorder,
-        borderRadius: 20,
-        borderWidth: 0.5,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-    },
-    chipSelectedText: {
-        color: colors.accentLight,
-        fontSize: typography.sizes.sm,
-    },
-    chipText: {
-        color: colors.textMuted,
-        fontSize: typography.sizes.sm,
-    },
-    clearText: {
-        color: colors.accentLight,
-        fontSize: typography.sizes.sm,
-    },
-    closeButton: {},
-    closeText: {
-        color: colors.accentLight,
-        fontSize: typography.sizes.sm,
-    },
-    container: {
-        backgroundColor: colors.background,
-        flex: 1,
-    },
-    footer: {
-        borderTopColor: colors.border,
-        borderTopWidth: 0.5,
-        padding: spacing.lg,
-    },
-    header: {
-        alignItems: 'center',
-        borderBottomColor: colors.border,
-        borderBottomWidth: 0.5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: spacing.lg,
-        paddingVertical: spacing.md,
-    },
-    scrollContent: {
-        paddingBottom: spacing.xl,
-    },
-    section: {
-        borderBottomColor: colors.border,
-        borderBottomWidth: 0.5,
-        gap: spacing.sm,
-        paddingHorizontal: spacing.lg,
-        paddingVertical: spacing.md,
-    },
-    sectionTitle: {
-        color: colors.textMuted,
-        fontSize: typography.sizes.xs,
-        fontWeight: typography.weights.bold,
-        letterSpacing: 1,
-        textTransform: 'uppercase',
-    },
-    title: {
-        color: colors.textPrimary,
-        fontSize: typography.sizes.lg,
-        fontWeight: typography.weights.bold,
-    },
+    shadowEffect: {
+        // Elevates the floating pill card visually over your scrolling chips
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8, // Required for shadow depth handling on Android devices
+    }
 });

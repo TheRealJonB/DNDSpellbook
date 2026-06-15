@@ -1,4 +1,4 @@
-import { FilterCategory } from "../types/filters";
+import { FilterCategory } from "./filters";
 
 /**
  * A completely universal utility that filters any list of objects 

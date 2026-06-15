@@ -1,8 +1,10 @@
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
+import { styles } from '../../theme/components/bottomSheetStyles';
 import { spacing } from '../../theme/spacing';
+
 
 interface CategoryItem {
     label: string;
@@ -14,6 +16,7 @@ interface LibraryCategoryBottomSheetProps {
     categories: CategoryItem[];
     onApplyCategory: (category: string) => void;
     currentCategory: string;
+    topInset: number;
 }
 
 export interface LibraryCategoryBottomSheetRef {
@@ -21,13 +24,13 @@ export interface LibraryCategoryBottomSheetRef {
     close: () => void;
 }
 
-const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, LibraryCategoryBottomSheetProps>(({ sheetTitle, categories, onApplyCategory, currentCategory }, ref) => {0
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['90%'], []);
+const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, LibraryCategoryBottomSheetProps>(({ sheetTitle, categories, onApplyCategory, currentCategory, topInset }, ref) => {
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+    const snapPoints = useMemo(() => ['100%'], []);
 
     // Expose specific functions to the parent component
     useImperativeHandle(ref, () => ({
-        open: () => { bottomSheetRef.current?.expand(); },
+        open: () => { bottomSheetRef.current?.present(); },
         close: () => { bottomSheetRef.current?.close(); },
     }));
 
@@ -36,94 +39,93 @@ const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, Lib
         bottomSheetRef.current?.close();
     }
 
+    const renderBackdrop = useCallback(
+        (props: BottomSheetBackdropProps) => (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1} // Keeps backdrop hidden when sheet is closed
+                appearsOnIndex={0}      // Starts showing backdrop at first snap point
+                opacity={0.5}          // How dark the background gets (0.0 to 1.0)
+            />
+        ),
+        []
+    );
+
     return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      index={-1}
-      snapPoints={snapPoints}
-      enablePanDownToClose={true}
-      backgroundStyle={styles.sheetBackground}
-      handleIndicatorStyle={styles.indicator}
-    >
-      <BottomSheetScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.sheetHeader}>{sheetTitle}</Text>
+        <BottomSheetModal
+            ref={bottomSheetRef}
+            index={0}
+            snapPoints={snapPoints}
+            enablePanDownToClose={true}
+            backdropComponent={renderBackdrop}
+            topInset={topInset}
+            enableDynamicSizing={false}
+        //   backgroundStyle={styles.sheetBackground}
+        //   handleIndicatorStyle={styles.indicator}
+        >
+            <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
+                <Text style={styles.sheetHeader}>{sheetTitle}</Text>
 
-        <View style={styles.listWrapper}>
-          {/* Dynamically map out the categories */}
-          {categories.map((item) => {
-            const isSelected = item.value === currentCategory;
+                <View style={categoryStyles.listWrapper}>
+                    {/* Dynamically map out the categories */}
+                    {categories.map((item) => {
+                        const isSelected = item.value === currentCategory;
 
-            return (
-              <Pressable
-                key={item.value}
-                style={({ pressed }) => [
-                  styles.categoryRow,
-                  isSelected && styles.categoryRowSelected,
-                  pressed && styles.categoryRowPressed,
-                ]}
-                onPress={() => handleSelect(item.value)}
-              >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    isSelected && styles.categoryTextSelected,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </BottomSheetScrollView>
-    </BottomSheet>
-  );
+                        return (
+                            <Pressable
+                                key={item.value}
+                                style={({ pressed }) => [
+                                    categoryStyles.categoryRow,
+                                    isSelected && categoryStyles.categoryRowSelected,
+                                    pressed && categoryStyles.categoryRowPressed,
+                                ]}
+                                onPress={() => handleSelect(item.value)}
+                            >
+                                <Text
+                                    style={[
+                                        categoryStyles.categoryText,
+                                        isSelected && categoryStyles.categoryTextSelected,
+                                    ]}
+                                >
+                                    {item.label}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
+            </BottomSheetScrollView>
+        </BottomSheetModal>
+    );
 });
 
 LibraryCategoryBottomSheet.displayName = 'LibraryCategoryBottomSheet';
 export default LibraryCategoryBottomSheet;
 
-const styles = StyleSheet.create({
-  sheetBackground: {
-    backgroundColor: '#1a1a1a', // Fits your dark theme
-  },
-  indicator: {
-    backgroundColor: '#555',
-  },
-  scrollContainer: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  sheetHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: spacing.md,
-    color: '#fff',
-  },
-  listWrapper: {
-    gap: spacing.sm, // Adds spacing between list rows natively
-  },
-  categoryRow: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: 8,
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  categoryRowSelected: {
-    backgroundColor: colors.accent || '#007AFF', // Use your theme color
-    borderColor: colors.accent || '#007AFF',
-  },
-  categoryRowPressed: {
-    opacity: 0.7,
-  },
-  categoryText: {
-    fontSize: 16,
-    color: '#ccc',
-  },
-  categoryTextSelected: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+const categoryStyles = StyleSheet.create({
+    listWrapper: {
+        gap: spacing.sm,
+    },
+    categoryRow: {
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.lg,
+        borderRadius: 8,
+        backgroundColor: '#2a2a2a',
+        borderWidth: 1,
+        borderColor: '#333',
+    },
+    categoryRowSelected: {
+        backgroundColor: colors.accent,
+        borderColor: colors.accent,
+    },
+    categoryRowPressed: {
+        opacity: 0.7,
+    },
+    categoryText: {
+        fontSize: 16,
+        color: '#ccc',
+    },
+    categoryTextSelected: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
 });

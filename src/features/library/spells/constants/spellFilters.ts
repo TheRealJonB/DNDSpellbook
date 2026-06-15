@@ -1,4 +1,4 @@
-import { FilterData } from "@/src/shared/types/filters";
+import { FilterData } from "@/src/shared/utils/filters";
 
 
 const SPELL_SCHOOLS = [
