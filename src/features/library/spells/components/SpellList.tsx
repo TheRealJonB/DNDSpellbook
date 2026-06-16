@@ -1,9 +1,10 @@
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import LoadingSpinner from '@/src/shared/components/ui/LoadingSpinner';
 import { useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import {
     Dimensions,
     Pressable,
+    ScrollView,
     StyleSheet,
     View
 } from 'react-native';
@@ -36,25 +37,30 @@ interface Props {
 
 export default function SpellList({ groupedSpells }: Props) {
     const router = useRouter();
-    const [maxLoadedTab, setMaxLoadedTab] = useState(0);
     const pagerRef = useRef<PagerView>(null);
-
     const tabOffset = useSharedValue(0);
+
+    // 1. Loading Trackers
+    const [isUILoading, setIsUILoading] = useState(true);
+    const [renderedTabsCount, setRenderedTabsCount] = useState(0);
+
+    // Corrected layout hook signature
+    const handleTabContentLayout = useCallback(() => {
+        setRenderedTabsCount((prev) => {
+            const nextCount = prev + 1;
+            if (nextCount === SPELL_TABS.length) {
+                requestAnimationFrame(() => {
+                    setIsUILoading(false);
+                });
+            }
+            return nextCount;
+        }); // Fixed: Closed the state updater function cleanly here
+    }, []); // The dependency array correctly sits out here
 
     // Derive the highlighted index directly from the bar's position
     const activeIndexDerived = useDerivedValue(() => {
         return Math.round(tabOffset.value / TAB_WIDTH);
     });
-
-
-    const handleListLoaded = useCallback((index: number) => {
-        console.log(`rendering page ${index}`); // so I can see how fast things load
-        if (index === maxLoadedTab && maxLoadedTab < SPELL_TABS.length - 1) {
-            requestAnimationFrame(() => {
-                setMaxLoadedTab((prev) => prev + 1);
-            });
-        }
-    }, [maxLoadedTab]);
 
     const handleTabPress = (index: number): void => {
         // Slide the bar and the page at the exact same time
@@ -69,10 +75,6 @@ export default function SpellList({ groupedSpells }: Props) {
         if (tabOffset.value !== position * TAB_WIDTH) {
             tabOffset.value = withSpring(position * TAB_WIDTH, NATIVE_SPRING_CONFIG);
         }
-
-        if (position > maxLoadedTab) {
-            setMaxLoadedTab(position);
-        }
     };
 
     const animatedIndicatorStyle = useAnimatedStyle(() => ({
@@ -83,19 +85,15 @@ export default function SpellList({ groupedSpells }: Props) {
         router.push(`/(tabs)/library/${spell.rowid}`);
     }, [router]);
 
-    const renderItem: ListRenderItem<LightSpell> = useCallback(({ item }) => {
-        return (
-            <SpellCard
-                spell={item}
-                onPress={handleSpellPress}
-            />
-        );
-    }, [handleSpellPress]);
-
     return (
         <View style={styles.container}>
+            {isUILoading && (
+                <View style={StyleSheet.absoluteFill}>
+                    <LoadingSpinner message="Loading spells..." />
+                </View>
+            )}
             {/* Tab Container */}
-            <View style={styles.tabBarContainer}>
+            <View style={[styles.tabBarContainer, { opacity: isUILoading ? 0 : 1 }]}>
                 <View style={styles.tabBar}>
                     {SPELL_TABS.map((tabName, index) => {
                         return (
@@ -119,20 +117,30 @@ export default function SpellList({ groupedSpells }: Props) {
                 onPageSelected={handlePageSelected}
             >
                 {groupedSpells.map((spells, index) => {
-                    const shouldRender = index <= maxLoadedTab;
 
                     return (
                         <View key={SPELL_TABS[index]} style={styles.page} collapsable={false}>
-                            {shouldRender ? (
-                                <FlashList<LightSpell>
-                                    data={spells}
-                                    renderItem={renderItem}
-                                    keyExtractor={(item) => item.name}
-                                    onLoad={() => handleListLoaded(index)}
-                                />
-                            ) : (
-                                <View style={{ flex: 1 }} />
-                            )}
+
+                            <ScrollView
+                                showsVerticalScrollIndicator={false}
+                                removeClippedSubviews={true} // huh?
+                                // "never" will close keyboard, components below will not receive tap
+                                //  "handled" only does if you tap something that handles that tap
+                                // "always" keeps keyboard up, and component below receives tap
+                                keyboardShouldPersistTaps="never"
+                                // contentContainerStyle={styles.listContent}
+                                onLayout={handleTabContentLayout}
+
+                            >
+                                {spells.map((spell) => (
+                                    <SpellCard
+                                        key={spell.rowid} // Fixed: Swapped name key for rowid to ensure uniqueness
+                                        spell={spell}
+                                        onPress={handleSpellPress}
+                                    />
+                                ))}
+                            </ScrollView>
+
                         </View>
                     );
                 })}
@@ -218,9 +226,6 @@ const styles = StyleSheet.create({
     page: {
         width: SCREEN_WIDTH,
         flex: 1
-    },
-    listContent: {
-        padding: 16
     },
     spellCard: {
         backgroundColor: '#fff',

@@ -21,22 +21,6 @@ function SpellCard({ onPress, spell }: Props) {
       <View style={[styles.schoolBar, { backgroundColor: schoolColor }]} />
       <View style={styles.content}>
         <Text style={styles.name}>{spell.name}</Text>
-        <View style={styles.tags}>
-          {spell.spellAttack && (
-            <Text style={styles.tag}>Attack</Text>
-          )}
-          {spell.savingThrowArray.length > 0 && (
-            <Text style={styles.tag}>{spell.savingThrowArray[0]} Save</Text>
-          )}
-          {spell.aoeShapeArray.length > 0 && (
-            <Text style={styles.tag}>{spell.aoeShapeArray[0]}</Text>
-          )}
-          {spell.damageTypeArray.length > 0 && (
-            <Text style={[styles.tag, styles.damageTag]}>
-              {spell.damageTypeArray[0]}
-            </Text>
-          )}
-        </View>
       </View>
       <Text style={styles.castingTime}>{spell.castingTimeAbbr}</Text>
     </Pressable>
@@ -47,12 +31,13 @@ export default memo(SpellCard);
 
 const styles = StyleSheet.create({
   card: {
+    alignSelf: 'stretch',
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderBottomColor: colors.border,
     borderBottomWidth: 0.5,
     flexDirection: 'row',
-    minHeight: 64,
+    height: 64,
     paddingRight: spacing.md,
     paddingVertical: spacing.sm,
   },
