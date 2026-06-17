@@ -3,35 +3,57 @@ import { useEffect, useState } from 'react';
 import { LightSpell } from '../../spells/models/Spell';
 import { getAllLightSpells, initializeSpells } from '../../spells/services/spellSyncService';
 
-export function useSpellsData() {
-    const [lightSpells, setLightSpells] = useState<LightSpell[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+export function useInitializeSpellTable() {
+    const [isLibraryReady, setIsLibraryReady] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
-        setIsLoading(true);
 
-        async function fetchDatabaseItems() {
+        async function setupDatabase() {
             try {
                 await initializeSpells();
-
-                if (lightSpells.length == 0) {
-                    const loadedSpells = await getAllLightSpells();
-                    setLightSpells(loadedSpells);
-                }
-
                 if (isMounted) {
-                    setIsLoading(false);
+                    setIsLibraryReady(true);
                 }
             } catch (error) {
-                console.error("Database fetch failure:", error);
-                if (isMounted) setIsLoading(false);
+                console.error("Critical database creation failure:", error);
+                if (isMounted) setIsLibraryReady(true);
             }
         }
 
-        fetchDatabaseItems();
+        setupDatabase();
         return () => { isMounted = false; }; // Prevent memory leak crashes on rapid tab changes
     }, []);
 
-    return { lightSpells, isLoading };
+    return { isLibraryReady };
+}
+
+export function useSpellsData() {
+    const [lightSpells, setLightSpells] = useState<LightSpell[]>([]);
+    const [isLightSpellsLoading, setIsLightSpellsLoading] = useState(true);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function fetchLightSpells() {
+            try {
+                setIsLightSpellsLoading(true);
+
+                const loadedSpells = await getAllLightSpells();
+
+                if (isMounted) {
+                    setLightSpells(loadedSpells);
+                    setIsLightSpellsLoading(false);
+                }
+            } catch (error) {
+                console.error("Spell database fetch failure:", error);
+                if (isMounted) setIsLightSpellsLoading(false);
+            }
+        }
+
+        fetchLightSpells();
+        return () => { isMounted = false; }; // Prevent memory leak crashes on rapid tab changes
+    }, []);
+
+    return { lightSpells, isLightSpellsLoading };
 }

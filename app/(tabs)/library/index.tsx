@@ -14,7 +14,7 @@ import { typography } from '@/src/shared/theme/typography';
 import { applyGenericFilters } from '@/src/shared/utils/applyGenericFilters';
 import { buildFilterCategoriesFromData, FilterCategory } from '@/src/shared/utils/filters';
 import { useMemo, useRef, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
@@ -32,7 +32,7 @@ export default function LibraryScreen() {
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   // repeat for armor, magic items, etc
-  const { lightSpells, isLoading } = useSpellsData();
+  const { lightSpells, isLightSpellsLoading } = useSpellsData();
   const [activeSpellFilters, setActiveSpellFilters] = useState<FilterCategory[]>(() =>
     buildFilterCategoriesFromData(SPELL_FILTERS)
   );
@@ -78,6 +78,11 @@ export default function LibraryScreen() {
   const handleCategoryChange = (newCategory: string) => {
     setCurrentCategory(newCategory);
   };
+
+
+  if (isLightSpellsLoading) {
+    return <ActivityIndicator size="small" />;
+  }
 
   return (
     <ScreenContainer>

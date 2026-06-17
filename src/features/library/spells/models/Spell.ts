@@ -1,11 +1,11 @@
 // only holds the fields that filtering needs
 export interface LightSpell {
-    rowid: number;
+    id: number;
     name: string;
     source: string;
     level: number;
     school: string;
-    classes: string[];
+    dndClassArray: string[];
     castingTimeAbbr: string;
     range: string;
     duration: string;
@@ -20,7 +20,7 @@ export interface LightSpell {
     spellAttack: boolean;
     ritual: boolean;
 
-    // things to implement
+    // things to implement later
     //   healing: string[];
     //   damage: stringp[];
     //   dieType: number;
@@ -34,36 +34,4 @@ export interface SpellHeavyDetails {
     components: string;
 }
 
-export interface Spell {
-    rowid: number;
-    name: string;
-    source: string;
-    level: number;
-    school: string;
-    classes: string[];
-    castingTimeAbbr: string;
-    range: string;
-    duration: string;
-    componentVerbal: boolean;
-    componentSomatic: boolean;
-    componentMaterial: boolean;
-    componentGoldRequired: boolean;
-    componentGoldConsumed: boolean;
-    damageTypeArray: string[];
-    savingThrowArray: string[];
-    aoeShapeArray: string[];
-    spellAttack: boolean;
-    ritual: boolean;
-
-    // things to implement
-    //   healing: string[];
-    //   damage: stringp[];
-    //   dieType: number;
-    //   hasUpgrade: boolean;
-
-    
-    castingTime: string;
-    description: string;
-    upgrade: string | null;
-    components: string;
-}
+export interface Spell extends LightSpell, SpellHeavyDetails {}

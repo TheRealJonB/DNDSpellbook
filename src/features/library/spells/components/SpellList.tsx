@@ -82,7 +82,7 @@ export default function SpellList({ groupedSpells }: Props) {
     }));
 
     const handleSpellPress = useCallback((spell: LightSpell) => {
-        router.push(`/(tabs)/library/${spell.rowid}`);
+        router.push(`/(tabs)/library/${spell.id}`);
     }, [router]);
 
     return (
@@ -134,7 +134,7 @@ export default function SpellList({ groupedSpells }: Props) {
                             >
                                 {spells.map((spell) => (
                                     <SpellCard
-                                        key={spell.rowid} // Fixed: Swapped name key for rowid to ensure uniqueness
+                                        key={spell.id}
                                         spell={spell}
                                         onPress={handleSpellPress}
                                     />

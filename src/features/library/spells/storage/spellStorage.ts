@@ -3,13 +3,17 @@ import { LightSpell, Spell, SpellHeavyDetails } from '../models/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();
+  
+  // Enable foreign key support inside SQLite explicitly
+  await db.execAsync('PRAGMA foreign_keys = ON;');
+
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS spells (
-      name TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
       source TEXT,
       level INTEGER,
       school TEXT,
-      classes TEXT,
       casting_time TEXT,
       casting_time_abbr TEXT,
       range TEXT,
@@ -22,11 +26,36 @@ export async function initSpellTable(): Promise<void> {
       component_material INTEGER,
       component_gold_required INTEGER,
       component_gold_consumed INTEGER,
-      damage_type_array TEXT,
-      saving_throw_array TEXT,
-      aoe_shape_array TEXT,
       spell_attack INTEGER,
       ritual INTEGER
+    );
+
+    CREATE TABLE IF NOT EXISTS spell_dnd_classes (
+      spell_id INTEGER NOT NULL,
+      dnd_class TEXT NOT NULL,
+      PRIMARY KEY (spell_id, dnd_class),
+      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS spell_damage_types (
+      spell_id INTEGER NOT NULL,
+      damage_type TEXT NOT NULL,
+      PRIMARY KEY (spell_id, damage_type),
+      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS spell_saving_throws (
+      spell_id INTEGER NOT NULL,
+      saving_throw TEXT NOT NULL,
+      PRIMARY KEY (spell_id, saving_throw),
+      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS spell_aoe_shapes (
+      spell_id INTEGER NOT NULL,
+      aoe_shape TEXT NOT NULL,
+      PRIMARY KEY (spell_id, aoe_shape),
+      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
     );
   `);
 }
@@ -35,19 +64,19 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const spell of spells) {
-      await db.runAsync(
+      // 1. Insert core spell attributes
+      const result = await db.runAsync(
         `INSERT OR REPLACE INTO spells (
-          name, source, level, school, classes, casting_time, casting_time_abbr,
+          name, source, level, school, casting_time, casting_time_abbr,
           range, components, duration, description, upgrade, component_verbal,
           component_somatic, component_material, component_gold_required, component_gold_consumed,
-          damage_type_array, saving_throw_array, aoe_shape_array, spell_attack, ritual
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          spell_attack, ritual
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           spell.name,
           spell.source,
           spell.level,
           spell.school,
-          JSON.stringify(spell.classes),
           spell.castingTime,
           spell.castingTimeAbbr,
           spell.range,
@@ -60,86 +89,117 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
           spell.componentMaterial ? 1 : 0,
           spell.componentGoldRequired ? 1 : 0,
           spell.componentGoldConsumed ? 1 : 0,
-          JSON.stringify(spell.damageTypeArray),
-          JSON.stringify(spell.savingThrowArray),
-          JSON.stringify(spell.aoeShapeArray),
           spell.spellAttack ? 1 : 0,
           spell.ritual ? 1 : 0,
         ]
       );
+
+      // Grab the database ID generated for this spell
+      const spellId = result.lastInsertRowId;
+
+      // Clean out old array entries to prevent duplicates during an "OR REPLACE" operation
+      await db.runAsync('DELETE FROM spell_dnd_classes WHERE spell_id = ?', [spellId]);
+      await db.runAsync('DELETE FROM spell_damage_types WHERE spell_id = ?', [spellId]);
+      await db.runAsync('DELETE FROM spell_saving_throws WHERE spell_id = ?', [spellId]);
+      await db.runAsync('DELETE FROM spell_aoe_shapes WHERE spell_id = ?', [spellId]);
+
+      // 2. Populate normalized relational helper tables
+      for (const dndClass of spell.dndClassArray) {
+        await db.runAsync('INSERT INTO spell_dnd_classes (spell_id, dnd_class) VALUES (?, ?)', [spellId, dndClass]);
+      }
+      for (const damageType of spell.damageTypeArray) {
+        await db.runAsync('INSERT INTO spell_damage_types (spell_id, damage_type) VALUES (?, ?)', [spellId, damageType]);
+      }
+      for (const savingThrow of spell.savingThrowArray) {
+        await db.runAsync('INSERT INTO spell_saving_throws (spell_id, saving_throw) VALUES (?, ?)', [spellId, savingThrow]);
+      }
+      for (const aoeShape of spell.aoeShapeArray) {
+        await db.runAsync('INSERT INTO spell_aoe_shapes (spell_id, aoe_shape) VALUES (?, ?)', [spellId, aoeShape]);
+      }
     }
   });
 }
 
 export async function loadLightSpells(): Promise<LightSpell[]> {
   const db = await getDatabase();
-  const lightSpells = await db.getAllAsync<Record<string, unknown>>(`
-  SELECT 
-    rowid, name, source, level, school, classes, casting_time_abbr, range, 
-    duration, component_verbal, component_somatic, component_material, 
-    component_gold_required, component_gold_consumed, damage_type_array, saving_throw_array, 
-    aoe_shape_array, spell_attack, ritual
-  FROM spells`
-  );
+  
+  // Load core table items
+  const rows = await db.getAllAsync<Record<string, unknown>>(`
+    SELECT 
+      id, name, source, level, school, casting_time_abbr, range, 
+      duration, component_verbal, component_somatic, component_material, 
+      component_gold_required, component_gold_consumed, spell_attack, ritual
+    FROM spells
+  `);
 
-  return lightSpells.map(row => ({
-    rowid: row.rowid as number,
-    name: row.name as string,
-    source: row.source as string,
-    level: row.level as number,
-    school: row.school as string,
-    classes: JSON.parse(row.classes as string),
-    castingTimeAbbr: row.casting_time_abbr as string,
-    range: row.range as string,
-    duration: row.duration as string,
-    componentVerbal: row.component_verbal === 1,
-    componentSomatic: row.component_somatic === 1,
-    componentMaterial: row.component_material === 1,
-    componentGoldRequired: row.component_gold_required === 1,
-    componentGoldConsumed: row.component_gold_consumed === 1,
-    damageTypeArray: JSON.parse(row.damage_type_array as string),
-    savingThrowArray: JSON.parse(row.saving_throw_array as string),
-    aoeShapeArray: JSON.parse(row.aoe_shape_array as string),
-    spellAttack: row.spell_attack === 1,
-    ritual: row.ritual === 1,
-  }));
+  // Pull all relations simultaneously in simple, indexed flat sweeps
+  const allClasses = await db.getAllAsync<{ spell_id: number; dnd_class: string }>('SELECT * FROM spell_dnd_classes');
+  const allDamage = await db.getAllAsync<{ spell_id: number; damage_type: string }>('SELECT * FROM spell_damage_types');
+  const allSaves = await db.getAllAsync<{ spell_id: number; saving_throw: string }>('SELECT * FROM spell_saving_throws');
+  const allShapes = await db.getAllAsync<{ spell_id: number; aoe_shape: string }>('SELECT * FROM spell_aoe_shapes');
+
+  return rows.map(row => {
+    const spellId = row.id as number;
+
+    return {
+      id: spellId,
+      name: row.name as string,
+      source: row.source as string,
+      level: row.level as number,
+      school: row.school as string,
+      castingTimeAbbr: row.casting_time_abbr as string,
+      range: row.range as string,
+      duration: row.duration as string,
+      componentVerbal: row.component_verbal === 1,
+      componentSomatic: row.component_somatic === 1,
+      componentMaterial: row.component_material === 1,
+      componentGoldRequired: row.component_gold_required === 1,
+      componentGoldConsumed: row.component_gold_consumed === 1,
+      spellAttack: row.spell_attack === 1,
+      ritual: row.ritual === 1,
+      
+      // Filter the global arrays down to match this single spell item in memory
+      dndClassArray: allClasses.filter(c => c.spell_id === spellId).map(c => c.dnd_class),
+      damageTypeArray: allDamage.filter(d => d.spell_id === spellId).map(d => d.damage_type),
+      savingThrowArray: allSaves.filter(s => s.spell_id === spellId).map(s => s.saving_throw),
+      aoeShapeArray: allShapes.filter(a => a.spell_id === spellId).map(a => a.aoe_shape),
+    };
+  });
 }
 
-export async function loadSpellHeavyDetails(rowid: number): Promise<SpellHeavyDetails | null> {
+export async function loadSpellHeavyDetails(id: number): Promise<SpellHeavyDetails | null> {
   const db = await getDatabase();
-  // FIXED: Added "AS castingTime" alias so the object maps directly to the TypeScript interface shape
   const spellHeavyDetails = await db.getFirstAsync<SpellHeavyDetails>(
     `SELECT casting_time AS castingTime, description, upgrade, components 
      FROM spells 
-     WHERE rowid = ?`,
-    [rowid]
+     WHERE id = ?`,
+    [id]
   );
-
-  if (!spellHeavyDetails) {
-    return null;
-  }
-
-  return spellHeavyDetails;
+  return spellHeavyDetails || null;
 }
 
-export async function loadFullSpell(rowid: number): Promise<Spell | null> {
+export async function loadFullSpell(id: number): Promise<Spell | null> {
   const db = await getDatabase();
   const row = await db.getFirstAsync<Record<string, unknown>>(
-    `SELECT * FROM spells WHERE rowid = ?`,
-    [rowid]
+    `SELECT * FROM spells WHERE id = ?`,
+    [id]
   );
 
-  if (!row) {
-    return null;
-  }
+  if (!row) return null;
+
+  const spellId = row.id as number;
+
+  const classes = await db.getAllAsync<{ dnd_class: string }>('SELECT dnd_class FROM spell_dnd_classes WHERE spell_id = ?', [spellId]);
+  const damage = await db.getAllAsync<{ damage_type: string }>('SELECT damage_type FROM spell_damage_types WHERE spell_id = ?', [spellId]);
+  const saves = await db.getAllAsync<{ saving_throw: string }>('SELECT saving_throw FROM spell_saving_throws WHERE spell_id = ?', [spellId]);
+  const shapes = await db.getAllAsync<{ aoe_shape: string }>('SELECT aoe_shape FROM spell_aoe_shapes WHERE spell_id = ?', [spellId]);
 
   return {
-    rowid: row.rowid as number,
+    id: spellId,
     name: row.name as string,
     source: row.source as string,
     level: row.level as number,
     school: row.school as string,
-    classes: JSON.parse(row.classes as string),
     castingTimeAbbr: row.casting_time_abbr as string,
     range: row.range as string,
     duration: row.duration as string,
@@ -148,25 +208,23 @@ export async function loadFullSpell(rowid: number): Promise<Spell | null> {
     componentMaterial: row.component_material === 1,
     componentGoldRequired: row.component_gold_required === 1,
     componentGoldConsumed: row.component_gold_consumed === 1,
-    damageTypeArray: JSON.parse(row.damage_type_array as string),
-    savingThrowArray: JSON.parse(row.saving_throw_array as string),
-    aoeShapeArray: JSON.parse(row.aoe_shape_array as string),
     spellAttack: row.spell_attack === 1,
     ritual: row.ritual === 1,
-
-    // FIXED: Changed row.castingTime to row.casting_time to correctly pull the snake_case database value
     castingTime: row.casting_time as string,
     description: row.description as string,
     upgrade: row.upgrade as string | null,
     components: row.components as string,
+
+    dndClassArray: classes.map(c => c.dnd_class),
+    damageTypeArray: damage.map(d => d.damage_type),
+    savingThrowArray: saves.map(s => s.saving_throw),
+    aoeShapeArray: shapes.map(a => a.aoe_shape),
   };
 }
 
 export async function getSpellCount(): Promise<number> {
   const db = await getDatabase();
-  const result = await db.getFirstAsync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM spells'
-  );
+  const result = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM spells');
   return result?.count ?? 0;
 }
 
@@ -178,17 +236,11 @@ export async function getSpellDataVersion(): Promise<number> {
       value TEXT NOT NULL
     );
   `);
-  const row = await db.getFirstAsync<{ value: string }>(
-    'SELECT value FROM app_meta WHERE key = ?',
-    ['spell_data_version']
-  );
+  const row = await db.getFirstAsync<{ value: string }>('SELECT value FROM app_meta WHERE key = ?', ['spell_data_version']);
   return row ? parseInt(row.value) : 0;
 }
 
 export async function setSpellDataVersion(version: number): Promise<void> {
   const db = await getDatabase();
-  await db.runAsync(
-    'INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)',
-    ['spell_data_version', version.toString()]
-  );
+  await db.runAsync('INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)', ['spell_data_version', version.toString()]);
 }

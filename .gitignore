@@ -50,4 +50,4 @@ app-example
 *.txt
 
 # other stuff I don't know wher it goes yet
-.idea/workspace.xml
+.idea/
