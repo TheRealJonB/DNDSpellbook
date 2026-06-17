@@ -20,14 +20,14 @@ export const styles = StyleSheet.create({
         marginBottom: 12, 
         textTransform: 'uppercase' 
     },
-    optionsWrapper: { 
+    filterOptionsWrapper: { 
         flexDirection: 'row', 
         flexWrap: 'wrap', 
         gap: 8 
     },
 
     // Chip Styles
-    optionChip: {
+    filterOptionChip: {
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 20,
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#e0e0e0',
     },
-    optionChipPressed: {
+    filterOptionChipPressed: {
         opacity: 0.7, // Replicating a slight fade, or you could do scale/color shifts
     },
 

@@ -13,7 +13,7 @@ export interface FilterOption {
 export interface FilterCategory {
   id: string;              // The unique identifier for this category (e.g., 'school')
   title: string;           // The group's display title (e.g., 'Magic Schools')
-  options: FilterOption[]; // The array of choices inside this category
+  filterOptions: FilterOption[]; // The array of choices inside this category
 }
 
 /**
@@ -32,7 +32,7 @@ export const buildFilterCategoriesFromData = (filterData: FilterData[]): FilterC
   return filterData.map((filterDatum) => ({
     id: filterDatum.slug,
     title: filterDatum.title,
-    options: filterDatum.list.map((item) => ({
+    filterOptions: filterDatum.list.map((item) => ({
       // E.g., 'school-abjuration' or 'casting-time-bonus-action'
       id: `${filterDatum.slug}-${item.toLowerCase().replace(/\s+/g, '-')}`,
       label: item,

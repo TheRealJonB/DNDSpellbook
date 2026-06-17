@@ -70,7 +70,7 @@ export default function LibraryScreen() {
   // also reset filters when switching categories
   const isFilterActive = useMemo(() => {
     return activeSpellFilters.some((categoryGroup) =>
-      categoryGroup.options.some((option) => option.isSelected)
+      categoryGroup.filterOptions.some((filterOption) => filterOption.isSelected)
     );
   }, [activeSpellFilters]); // Re-evaluates instantly whenever a checkbox is flipped
 

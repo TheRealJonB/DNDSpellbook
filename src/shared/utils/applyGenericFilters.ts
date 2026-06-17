@@ -6,18 +6,18 @@ import { FilterCategory } from "./filters";
  */
 export function applyGenericFilters<T extends Record<string, any>>(
   dataList: T[], 
-  filterGroups: FilterCategory[]
+  filterCategories: FilterCategory[]
 ): T[] {
   if (!dataList || dataList.length === 0) return [];
 
   // 1. Collect only the categories and labels that are actively checked true
-  const activeFilters = filterGroups.reduce((accumulator, group) => {
-    const selectedLabels = group.options
-      .filter((option) => option.isSelected)
-      .map((option) => option.label);
+  const activeFilters = filterCategories.reduce((accumulator, filterCategory) => {
+    const selectedLabels = filterCategory.filterOptions
+      .filter((filterOption) => filterOption.isSelected)
+      .map((filterOption) => filterOption.label);
 
     if (selectedLabels.length > 0) {
-      accumulator[group.id] = selectedLabels;
+      accumulator[filterCategory.id] = selectedLabels;
     }
     return accumulator;
   }, {} as Record<string, string[]>);
@@ -29,9 +29,9 @@ export function applyGenericFilters<T extends Record<string, any>>(
 
   // 2. Filter the items. An item must pass EVERY active filter category.
   return dataList.filter((item) => {
-    return Object.entries(activeFilters).every(([groupId, selectedValues]) => {
+    return Object.entries(activeFilters).every(([categoryTitle, selectedValues]) => {
       // Dynamic lookup using the group ID slug against the item's keys
-      const itemValue = item[groupId];
+      const itemValue = item[categoryTitle];
 
       if (itemValue === undefined || itemValue === null) return false;
 

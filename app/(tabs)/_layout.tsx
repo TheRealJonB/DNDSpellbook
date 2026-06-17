@@ -49,12 +49,6 @@ export default function TabLayout() {
             <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
-      /><Tabs.Screen
-        name="character-selector"
-        options={{
-          href: null,        // hides it from the tab bar
-          // tabBarStyle: { display: 'none' },  // hides tab bar while on this screen
-        }}
       />
     </Tabs>
   );

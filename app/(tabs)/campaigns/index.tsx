@@ -10,9 +10,9 @@ import { typography } from '@/src/shared/theme/typography';
 import { useRouter } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
-export default function CharactersScreen() {
+export default function CampaignsScreen() {
   const router = useRouter();
-  const { characters, isLoading } = useCharacters();
+  const { campaigns, isLoading } = useCharacters();
 
   function handleCharacterPress(character: Character) {
     router.push(`/campaigns/${character.id}`); // FIX THIS

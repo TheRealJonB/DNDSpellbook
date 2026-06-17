@@ -26,13 +26,13 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
     useEffect(() => {
         setLocalFilters(filters);
     }, [filters]);
-    const handleToggleOption = (filterCategoryId: string, optionId: string) => {
+    const handleToggleOption = (filterCategoryId: string, filterOptionId: string) => {
         const updated = localFilters.map(filterCategory => {
             if (filterCategory.id !== filterCategoryId) return filterCategory;
             return {
                 ...filterCategory,
-                options: filterCategory.options.map(opt =>
-                    opt.id === optionId ? { ...opt, isSelected: !opt.isSelected } : opt
+                filterOptionId: filterCategory.filterOptions.map(opt =>
+                    opt.id === filterOptionId ? { ...opt, isSelected: !opt.isSelected } : opt
                 )
             };
         });
@@ -42,8 +42,8 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
         const updated = localFilters.map(filterCategory => {
             return {
                 ...filterCategory,
-                options: filterCategory.options.map(option => ({
-                    ...option,
+                filterOptions: filterCategory.filterOptions.map(filterOption => ({
+                    ...filterOption,
                     isSelected: false
                 }))
             };
@@ -102,26 +102,26 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                         <Text style={styles.sectionTitle}>{group.title}</Text>
 
                         <View style={styles.chipRow}>
-                            {/* Dynamically loop over changing option items inside this specific group */}
-                            {group.options.map((option) => (
+                            {/* Dynamically loop over changing filterOption items inside this specific group */}
+                            {group.filterOptions.map((filterOption) => (
                                 /* 2. Swapped to Pressable with a dynamic style function */
                                 <Pressable
-                                    key={option.id}
+                                    key={filterOption.id}
                                     hitSlop={8} // Makes small chips easier to tap
                                     style={({ pressed }) => [
                                         styles.chip,
-                                        option.isSelected && styles.chipSelected,
-                                        pressed && styles.optionChipPressed, // Custom active feedback
+                                        filterOption.isSelected && styles.chipSelected,
+                                        pressed && styles.filterOptionChipPressed, // Custom active feedback
                                     ]}
-                                    onPress={() => handleToggleOption(group.id, option.id)}
+                                    onPress={() => handleToggleOption(group.id, filterOption.id)}
                                 >
                                     <Text
                                         style={[
                                             styles.chipText,
-                                            option.isSelected && styles.chipSelectedText,
+                                            filterOption.isSelected && styles.chipSelectedText,
                                         ]}
                                     >
-                                        {option.label}
+                                        {filterOption.label}
                                     </Text>
                                 </Pressable>
                             ))}
