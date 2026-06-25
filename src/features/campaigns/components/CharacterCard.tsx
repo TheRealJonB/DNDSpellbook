@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
-import { Character } from '../models/Character';
+import { Character } from '../models/fiveE/Character';
 
 interface Props {
   character: Character;

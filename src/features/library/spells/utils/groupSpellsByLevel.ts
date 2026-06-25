@@ -1,4 +1,4 @@
-import { LightSpell } from "../models/Spell";
+import { LightSpell } from "../models/fiveE/Spell";
 
 export function groupSpellsByLevel(spells: LightSpell[]): LightSpell[][] {
   const groups: LightSpell[][] = Array.from({ length: 10 }, () => []);

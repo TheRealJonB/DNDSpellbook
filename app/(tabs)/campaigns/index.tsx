@@ -1,5 +1,5 @@
 import CharacterCard from '@/src/features/campaigns/components/CharacterCard';
-import { Character } from '@/src/features/campaigns/models/Character';
+import { Character } from '@/src/features/campaigns/models/fiveE/Character';
 import { useCharacters } from '@/src/features/campaigns/store/CharacterContext';
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import EmptyState from '@/src/shared/components/ui/EmptyState';

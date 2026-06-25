@@ -1,4 +1,4 @@
-import { LightSpell } from "../models/Spell";
+import { LightSpell } from "../models/fiveE/Spell";
 
 export function searchSpells(spells: LightSpell[], query: string): LightSpell[] {
   if (!query.trim()) return spells;

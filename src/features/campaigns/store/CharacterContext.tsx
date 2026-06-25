@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Character } from '../models/Character';
+import { Character } from '../models/fiveE/Character';
 import {
-  addSpells,
-  createCharacter,
-  getAllCharacters,
-  initializeCharacters,
-  removeCharacter,
-  removeSpells,
+    addSpells,
+    createCharacter,
+    getAllCharacters,
+    initializeCharacters,
+    removeCharacter,
+    removeSpells,
 } from '../services/characterService';
 
 interface CharacterContextType {

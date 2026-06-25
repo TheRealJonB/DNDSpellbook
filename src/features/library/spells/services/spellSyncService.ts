@@ -1,5 +1,5 @@
 import spellsData from '../data/spells.json';
-import { LightSpell, Spell, SpellHeavyDetails } from '../models/Spell';
+import { LightSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
 import { getSpellCount, getSpellDataVersion, initSpellTable, loadFullSpell, loadLightSpells, loadSpellHeavyDetails, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
 const SPELL_DATA_VERSION = 1;

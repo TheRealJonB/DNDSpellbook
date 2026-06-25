@@ -1,4 +1,4 @@
-import { Spell } from '@/src/features/library/spells/models/Spell';
+import { Spell } from '@/src/features/library/spells/models/fiveE/Spell';
 import { getFullSpell } from '@/src/features/library/spells/services/spellSyncService';
 import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import LoadingSpinner from '@/src/shared/components/ui/LoadingSpinner';

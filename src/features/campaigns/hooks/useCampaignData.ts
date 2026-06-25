@@ -1,9 +1,7 @@
 // src/features/library/shared/hooks/useLibraryData.ts
 import { useEffect, useState } from 'react';
-import { getAllLightSpells, initializeSpells } from '../../spells/services/spellSyncService';
-import { LightSpell } from '../models/fiveE/Spell';
 
-export function useInitializeSpellTable() {
+export function useInitializeCampaignTable() {
     const [isLibraryReady, setIsLibraryReady] = useState(false);
 
     useEffect(() => {

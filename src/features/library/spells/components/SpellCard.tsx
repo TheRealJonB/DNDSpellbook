@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
-import { LightSpell } from '../models/Spell';
+import { LightSpell } from '../models/fiveE/Spell';
 
 interface Props {
   onPress: (spell: LightSpell) => void;

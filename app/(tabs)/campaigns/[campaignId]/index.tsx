@@ -2,7 +2,7 @@ import ScreenContainer from '@/src/shared/components/layout/ScreenContainer';
 import { useRouter } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import CharacterCard from '../../../../src/features/campaigns/components/CharacterCard';
-import { Character } from '../../../../src/features/campaigns/models/Character';
+import { Character } from '../../../../src/features/campaigns/models/fiveE/Character';
 import { useCharacters } from '../../../../src/features/campaigns/store/CharacterContext';
 import EmptyState from '../../../../src/shared/components/ui/EmptyState';
 import LoadingSpinner from '../../../../src/shared/components/ui/LoadingSpinner';

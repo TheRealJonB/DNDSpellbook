@@ -1,6 +1,5 @@
-import LoadingSpinner from '@/src/shared/components/ui/LoadingSpinner';
 import { useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import {
     Dimensions,
     Pressable,
@@ -16,7 +15,7 @@ import Animated, {
     withSpring,
     withTiming
 } from 'react-native-reanimated';
-import { LightSpell } from '../models/Spell';
+import { LightSpell } from '../models/fiveE/Spell';
 import SpellCard from './SpellCard';
 
 
@@ -39,23 +38,6 @@ export default function SpellList({ groupedSpells }: Props) {
     const router = useRouter();
     const pagerRef = useRef<PagerView>(null);
     const tabOffset = useSharedValue(0);
-
-    // 1. Loading Trackers
-    const [isUILoading, setIsUILoading] = useState(true);
-    const [renderedTabsCount, setRenderedTabsCount] = useState(0);
-
-    // Corrected layout hook signature
-    const handleTabContentLayout = useCallback(() => {
-        setRenderedTabsCount((prev) => {
-            const nextCount = prev + 1;
-            if (nextCount === SPELL_TABS.length) {
-                requestAnimationFrame(() => {
-                    setIsUILoading(false);
-                });
-            }
-            return nextCount;
-        }); // Fixed: Closed the state updater function cleanly here
-    }, []); // The dependency array correctly sits out here
 
     // Derive the highlighted index directly from the bar's position
     const activeIndexDerived = useDerivedValue(() => {
@@ -87,13 +69,8 @@ export default function SpellList({ groupedSpells }: Props) {
 
     return (
         <View style={styles.container}>
-            {isUILoading && (
-                <View style={StyleSheet.absoluteFill}>
-                    <LoadingSpinner message="Loading spells..." />
-                </View>
-            )}
             {/* Tab Container */}
-            <View style={[styles.tabBarContainer, { opacity: isUILoading ? 0 : 1 }]}>
+            <View style={styles.tabBarContainer}>
                 <View style={styles.tabBar}>
                     {SPELL_TABS.map((tabName, index) => {
                         return (
@@ -129,7 +106,7 @@ export default function SpellList({ groupedSpells }: Props) {
                                 // "always" keeps keyboard up, and component below receives tap
                                 keyboardShouldPersistTaps="never"
                                 // contentContainerStyle={styles.listContent}
-                                onLayout={handleTabContentLayout}
+                                // onLayout={handleTabContentLayout}
 
                             >
                                 {spells.map((spell) => (

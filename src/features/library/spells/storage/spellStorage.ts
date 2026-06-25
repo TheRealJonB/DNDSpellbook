@@ -1,5 +1,5 @@
 import { getDatabase } from '@/src/shared/storage/storageClient';
-import { LightSpell, Spell, SpellHeavyDetails } from '../models/Spell';
+import { LightSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();
@@ -10,6 +10,7 @@ export async function initSpellTable(): Promise<void> {
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS spells (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      edition TEXT NOT NULL,
       name TEXT UNIQUE NOT NULL,
       source TEXT,
       level INTEGER,
@@ -67,13 +68,14 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
       // 1. Insert core spell attributes
       const result = await db.runAsync(
         `INSERT OR REPLACE INTO spells (
-          name, source, level, school, casting_time, casting_time_abbr,
+          name, edition, source, level, school, casting_time, casting_time_abbr,
           range, components, duration, description, upgrade, component_verbal,
           component_somatic, component_material, component_gold_required, component_gold_consumed,
           spell_attack, ritual
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           spell.name,
+          spell.edition,
           spell.source,
           spell.level,
           spell.school,
@@ -196,6 +198,7 @@ export async function loadFullSpell(id: number): Promise<Spell | null> {
 
   return {
     id: spellId,
+    edition: row.edition as string,
     name: row.name as string,
     source: row.source as string,
     level: row.level as number,
