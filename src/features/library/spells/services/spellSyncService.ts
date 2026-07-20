@@ -1,5 +1,5 @@
 import spellsData from '../data/spells.json';
-import { SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
+import { ScrapedSpell, SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
 import { getSpellCount, getSpellDataVersion, initSpellTable, loadFullSpell, loadSearchableSpells, loadSpellHeavyDetails, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
 const SPELL_DATA_VERSION = 1;
@@ -12,7 +12,7 @@ export async function initializeSpells() {
 
   if (count === 0 || storedVersion < SPELL_DATA_VERSION) {
     // console.log('Seeding spells from JSON...');
-    await saveSpells(spellsData as Spell[]);
+    await saveSpells(spellsData as ScrapedSpell[]);
     await setSpellDataVersion(SPELL_DATA_VERSION);
     // console.log('Spells in database after seed:', await getSpellCount());
     // console.log('Seeding complete');
