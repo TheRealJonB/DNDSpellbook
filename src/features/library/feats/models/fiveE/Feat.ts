@@ -1,12 +1,39 @@
 import { BaseModel } from "@/src/shared/models/BaseModel";
-import { Feature } from "@/src/shared/models/Feature";
 
- 
+export type ScrapedFeat = Omit<Feat, 'id'>
+
+export type SearchableFeat = Pick<Feat,
+    'id' | 'name' | 'source' | 'prereq' | 'abilityScoreIncreased'>
+
+
+export type FeatHeavyDetails = Omit<Feat, keyof SearchableFeat>
+
+export interface FeatDBRow extends BaseModel {
+    name: string;
+    source: string;
+    prereq: string;
+    ability_score_increased: string;
+    features: string;
+    description: string;
+}
+
 export interface Feat extends BaseModel {
     name: string;
     source: string;
-    prerequisite: string[]; // make this more specific? level, base ability score, previous feat, source material
-    description: Feature[]; // "You gain the following benefits, and then it lists them"
-    // these always only go up to 20
-    statBonus: string;  // format it a certain way, like - separated for option INT-WIS-CHA or something. Could have it be a list of enum too
+    prereq: string;
+    abilityScoreIncreased: string[];
+    features: Feature[];
+    description: string[];
+}
+
+export interface Feature {
+    info: string;
+    table: Table;
+
+}
+
+export interface Table {
+    description: string[];
+    header: string[];
+    entries: string[][];
 }

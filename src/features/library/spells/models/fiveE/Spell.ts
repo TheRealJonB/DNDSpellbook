@@ -8,7 +8,7 @@ export type SearchableSpell = Pick<Spell,
                     'savingThrowArray'|'aoeShapeArray'|'spellAttack'|
                     'dndClasses'>
 
-export type SpellHeavyDetails = Pick<Spell, 'castingTime'|'description'|'upgrade'|'components'>
+export type SpellHeavyDetails = Pick<Spell, keyof SearchableSpell>
 
 export type ScrapedSpell = Omit<Spell, 'id'>
 

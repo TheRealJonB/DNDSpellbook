@@ -1,0 +1,17 @@
+[ {
+  "armorCategory" : "Light Armor",
+  "don" : "1 minute",
+  "doff" : "1 minute"
+}, {
+  "armorCategory" : "Medium Armor",
+  "don" : "5 minutes",
+  "doff" : "1 minute"
+}, {
+  "armorCategory" : "Heavy Armor",
+  "don" : "10 minutes",
+  "doff" : "5 minutes"
+}, {
+  "armorCategory" : "Shield",
+  "don" : "1 action",
+  "doff" : "1 action"
+} ]

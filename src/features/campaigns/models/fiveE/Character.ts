@@ -2,7 +2,7 @@ import { Background } from "@/src/features/library/backgrounds/models/fiveE/Back
 import { Class, LightClass } from "@/src/features/library/classes/models/fiveE/Class";
 import { Spell } from "@/src/features/library/spells/models/fiveE/Spell";
 import { BaseModel } from "@/src/shared/models/BaseModel";
-import { LightRace, Race } from "../../../library/species/models/fiveE/Race";
+import { LightRace, Race } from "../../../library/lineages/models/fiveE/Race";
 
 export interface AbilityScores {
   str: number;
