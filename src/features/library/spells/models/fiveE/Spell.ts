@@ -1,46 +1,42 @@
 import { BaseModel } from "@/src/shared/models/BaseModel";
 
 // only holds the fields that filtering needs
-export type LightSpell = Pick<Spell,    'id'|'name'|'source'|'level'|'school'|'dndClassArray'|'castingTimeAbbr'|
-                                        'range'|'duration'|'componentVerbal'|'componentSomatic'|'componentMaterial'|
-                                        'componentGoldRequired'|'componentGoldConsumed'|'damageTypeArray'|
-                                        'savingThrowArray'|'aoeShapeArray'|'spellAttack'|'ritual'>
+export type SearchableSpell = Pick<Spell,
+                    'id'|'name'|'source'|'level'|'school'|
+                    'castingTimeAbbr'|'ritual'|'range'|'componentVerbal'|'componentSomatic'|'componentMaterial'|
+                    'componentGoldRequired'|'componentGoldConsumed'|'duration'|'damageTypeArray'|
+                    'savingThrowArray'|'aoeShapeArray'|'spellAttack'|
+                    'dndClasses'>
 
 export type SpellHeavyDetails = Pick<Spell, 'castingTime'|'description'|'upgrade'|'components'>
 
 export interface Spell extends BaseModel {
-    // LightSpell info
+    // SearchableSpell info
     name: string;
     source: string;
     level: number;
     school: string;
-    dndClassArray: string[];
+    
+    castingTime: string;
     castingTimeAbbr: string;
+    ritual: boolean;
     range: string;
-    duration: string;
+    components: string;
     componentVerbal: boolean;
     componentSomatic: boolean;
     componentMaterial: boolean;
     componentGoldRequired: boolean;
     componentGoldConsumed: boolean;
+    duration: string;
+
+    description: string[];
     damageTypeArray: string[];
     savingThrowArray: string[];
     aoeShapeArray: string[];
     spellAttack: boolean;
-    ritual: boolean;
 
-    // HeavySpellDetails
-    castingTime: string;
-    description: string;
     upgrade: string | null;
-    components: string;
-
-
-    // things to implement later
-    //   healing: string[];
-    //   damage: stringp[];
-    //   dieType: number;
-    //   hasUpgrade: boolean;
+    dndClasses: string[];
 
 }
 

@@ -32,7 +32,7 @@ export default function LibraryScreen() {
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   // repeat for armor, magic items, etc
-  const { lightSpells, isLightSpellsLoading } = useSpellsData();
+  const { lightSpells, isSearchableSpellsLoading } = useSpellsData();
   const [activeSpellFilters, setActiveSpellFilters] = useState<FilterCategory[]>(() =>
     buildFilterCategoriesFromData(SPELL_FILTERS)
   );
@@ -80,7 +80,7 @@ export default function LibraryScreen() {
   };
 
 
-  if (isLightSpellsLoading) {
+  if (isSearchableSpellsLoading) {
     return <ActivityIndicator size="small" />;
   }
 

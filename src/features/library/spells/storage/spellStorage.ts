@@ -1,41 +1,33 @@
 import { getDatabase } from '@/src/shared/storage/storageClient';
-import { LightSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
+import { SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();
-  
+
   // Enable foreign key support inside SQLite explicitly
   await db.execAsync('PRAGMA foreign_keys = ON;');
 
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS spells (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      edition TEXT NOT NULL,
       name TEXT UNIQUE NOT NULL,
       source TEXT,
       level INTEGER,
       school TEXT,
       casting_time TEXT,
       casting_time_abbr TEXT,
+      ritual INTEGER,
       range TEXT,
       components TEXT,
-      duration TEXT,
-      description TEXT,
-      upgrade TEXT,
       component_verbal INTEGER,
       component_somatic INTEGER,
       component_material INTEGER,
       component_gold_required INTEGER,
       component_gold_consumed INTEGER,
+      duration TEXT,
+      description TEXT,
       spell_attack INTEGER,
-      ritual INTEGER
-    );
-
-    CREATE TABLE IF NOT EXISTS spell_dnd_classes (
-      spell_id INTEGER NOT NULL,
-      dnd_class TEXT NOT NULL,
-      PRIMARY KEY (spell_id, dnd_class),
-      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
+      upgrade TEXT
     );
 
     CREATE TABLE IF NOT EXISTS spell_damage_types (
@@ -58,6 +50,13 @@ export async function initSpellTable(): Promise<void> {
       PRIMARY KEY (spell_id, aoe_shape),
       FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS spell_dnd_classes (
+      spell_id INTEGER NOT NULL,
+      dnd_class TEXT NOT NULL,
+      PRIMARY KEY (spell_id, dnd_class),
+      FOREIGN KEY (spell_id) REFERENCES spells (id) ON DELETE CASCADE
+    );
   `);
 }
 
@@ -68,31 +67,33 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
       // 1. Insert core spell attributes
       const result = await db.runAsync(
         `INSERT OR REPLACE INTO spells (
-          name, edition, source, level, school, casting_time, casting_time_abbr,
-          range, components, duration, description, upgrade, component_verbal,
-          component_somatic, component_material, component_gold_required, component_gold_consumed,
-          spell_attack, ritual
+          name, source, level, school, casting_time, casting_time_abbr,
+          ritual, range, components, component_verbal, component_somatic, component_material, 
+          component_gold_required, component_gold_consumed, duration, 
+          description, spell_attack, upgrade
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           spell.name,
-          spell.edition,
           spell.source,
           spell.level,
           spell.school,
+
           spell.castingTime,
           spell.castingTimeAbbr,
+          spell.ritual ? 1 : 0,
           spell.range,
           spell.components,
-          spell.duration,
-          spell.description,
-          spell.upgrade ?? null,
           spell.componentVerbal ? 1 : 0,
           spell.componentSomatic ? 1 : 0,
           spell.componentMaterial ? 1 : 0,
           spell.componentGoldRequired ? 1 : 0,
           spell.componentGoldConsumed ? 1 : 0,
+          spell.duration,
+
+          JSON.stringify(spell.description),
           spell.spellAttack ? 1 : 0,
-          spell.ritual ? 1 : 0,
+
+          spell.upgrade ?? null,
         ]
       );
 
@@ -100,15 +101,12 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
       const spellId = result.lastInsertRowId;
 
       // Clean out old array entries to prevent duplicates during an "OR REPLACE" operation
-      await db.runAsync('DELETE FROM spell_dnd_classes WHERE spell_id = ?', [spellId]);
       await db.runAsync('DELETE FROM spell_damage_types WHERE spell_id = ?', [spellId]);
       await db.runAsync('DELETE FROM spell_saving_throws WHERE spell_id = ?', [spellId]);
       await db.runAsync('DELETE FROM spell_aoe_shapes WHERE spell_id = ?', [spellId]);
+      await db.runAsync('DELETE FROM spell_dnd_classes WHERE spell_id = ?', [spellId]);
 
       // 2. Populate normalized relational helper tables
-      for (const dndClass of spell.dndClassArray) {
-        await db.runAsync('INSERT INTO spell_dnd_classes (spell_id, dnd_class) VALUES (?, ?)', [spellId, dndClass]);
-      }
       for (const damageType of spell.damageTypeArray) {
         await db.runAsync('INSERT INTO spell_damage_types (spell_id, damage_type) VALUES (?, ?)', [spellId, damageType]);
       }
@@ -118,19 +116,23 @@ export async function saveSpells(spells: Spell[]): Promise<void> {
       for (const aoeShape of spell.aoeShapeArray) {
         await db.runAsync('INSERT INTO spell_aoe_shapes (spell_id, aoe_shape) VALUES (?, ?)', [spellId, aoeShape]);
       }
+      for (const dndClass of spell.dndClasses) {
+        await db.runAsync('INSERT INTO spell_dnd_classes (spell_id, dnd_class) VALUES (?, ?)', [spellId, dndClass]);
+      }
     }
   });
 }
 
-export async function loadLightSpells(): Promise<LightSpell[]> {
+export async function loadSearchableSpells(): Promise<SearchableSpell[]> {
   const db = await getDatabase();
-  
+
   // Load core table items
   const rows = await db.getAllAsync<Record<string, unknown>>(`
     SELECT 
-      id, name, source, level, school, casting_time_abbr, range, 
-      duration, component_verbal, component_somatic, component_material, 
-      component_gold_required, component_gold_consumed, spell_attack, ritual
+      id, name, source, level, school, 
+      casting_time_abbr, ritual, range, component_verbal, component_somatic, component_material, 
+      component_gold_required, component_gold_consumed, 
+      duration, spell_attack
     FROM spells
   `);
 
@@ -149,22 +151,25 @@ export async function loadLightSpells(): Promise<LightSpell[]> {
       source: row.source as string,
       level: row.level as number,
       school: row.school as string,
+
       castingTimeAbbr: row.casting_time_abbr as string,
+      ritual: row.ritual === 1,
       range: row.range as string,
-      duration: row.duration as string,
       componentVerbal: row.component_verbal === 1,
       componentSomatic: row.component_somatic === 1,
       componentMaterial: row.component_material === 1,
       componentGoldRequired: row.component_gold_required === 1,
       componentGoldConsumed: row.component_gold_consumed === 1,
-      spellAttack: row.spell_attack === 1,
-      ritual: row.ritual === 1,
-      
-      // Filter the global arrays down to match this single spell item in memory
-      dndClassArray: allClasses.filter(c => c.spell_id === spellId).map(c => c.dnd_class),
+      duration: row.duration as string,
+
       damageTypeArray: allDamage.filter(d => d.spell_id === spellId).map(d => d.damage_type),
       savingThrowArray: allSaves.filter(s => s.spell_id === spellId).map(s => s.saving_throw),
       aoeShapeArray: allShapes.filter(a => a.spell_id === spellId).map(a => a.aoe_shape),
+      spellAttack: row.spell_attack === 1,
+
+      dndClasses: allClasses.filter(c => c.spell_id === spellId).map(c => c.dnd_class),
+
+      // Filter the global arrays down to match this single spell item in memory
     };
   });
 }
@@ -198,30 +203,31 @@ export async function loadFullSpell(id: number): Promise<Spell | null> {
 
   return {
     id: spellId,
-    edition: row.edition as string,
     name: row.name as string,
     source: row.source as string,
     level: row.level as number,
     school: row.school as string,
+
+    castingTime: row.casting_time as string,
     castingTimeAbbr: row.casting_time_abbr as string,
+    ritual: row.ritual === 1,
     range: row.range as string,
-    duration: row.duration as string,
+    components: row.components as string,
     componentVerbal: row.component_verbal === 1,
     componentSomatic: row.component_somatic === 1,
     componentMaterial: row.component_material === 1,
     componentGoldRequired: row.component_gold_required === 1,
     componentGoldConsumed: row.component_gold_consumed === 1,
-    spellAttack: row.spell_attack === 1,
-    ritual: row.ritual === 1,
-    castingTime: row.casting_time as string,
-    description: row.description as string,
-    upgrade: row.upgrade as string | null,
-    components: row.components as string,
+    duration: row.duration as string,
 
-    dndClassArray: classes.map(c => c.dnd_class),
+    description: JSON.parse(row.description as string) as string[],
     damageTypeArray: damage.map(d => d.damage_type),
     savingThrowArray: saves.map(s => s.saving_throw),
     aoeShapeArray: shapes.map(a => a.aoe_shape),
+    spellAttack: row.spell_attack === 1,
+
+    upgrade: row.upgrade as string | null,
+    dndClasses: classes.map(c => c.dnd_class),
   };
 }
 

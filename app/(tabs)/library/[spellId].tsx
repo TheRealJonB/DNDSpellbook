@@ -161,7 +161,7 @@ export default function SpellDetailScreen() {
           {/* classes */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Classes</Text>
-            <Text style={styles.classesText}>{spell.dndClassArray.join(', ')}</Text>
+            <Text style={styles.classesText}>{spell.dndClasses.join(', ')}</Text>
           </View>
 
           {/* description */}

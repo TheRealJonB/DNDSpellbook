@@ -15,7 +15,7 @@ import Animated, {
     withSpring,
     withTiming
 } from 'react-native-reanimated';
-import { LightSpell } from '../models/fiveE/Spell';
+import { SearchableSpell } from '../models/fiveE/Spell';
 import SpellCard from './SpellCard';
 
 
@@ -31,7 +31,7 @@ const NATIVE_SPRING_CONFIG = {
 };
 
 interface Props {
-    groupedSpells: LightSpell[][];
+    groupedSpells: SearchableSpell[][];
 }
 
 export default function SpellList({ groupedSpells }: Props) {
@@ -63,7 +63,7 @@ export default function SpellList({ groupedSpells }: Props) {
         transform: [{ translateX: tabOffset.value }],
     }));
 
-    const handleSpellPress = useCallback((spell: LightSpell) => {
+    const handleSpellPress = useCallback((spell: SearchableSpell) => {
         router.push(`/(tabs)/library/${spell.id}`);
     }, [router]);
 

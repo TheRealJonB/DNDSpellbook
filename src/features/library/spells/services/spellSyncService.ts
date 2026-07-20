@@ -1,6 +1,6 @@
 import spellsData from '../data/spells.json';
-import { LightSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
-import { getSpellCount, getSpellDataVersion, initSpellTable, loadFullSpell, loadLightSpells, loadSpellHeavyDetails, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
+import { SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
+import { getSpellCount, getSpellDataVersion, initSpellTable, loadFullSpell, loadSearchableSpells, loadSpellHeavyDetails, saveSpells, setSpellDataVersion } from '../storage/spellStorage';
 
 const SPELL_DATA_VERSION = 1;
 
@@ -19,8 +19,8 @@ export async function initializeSpells() {
   }
 }
 
-export async function getAllLightSpells(): Promise<LightSpell[]> {
-  return await loadLightSpells();
+export async function getAllSearchableSpells(): Promise<SearchableSpell[]> {
+  return await loadSearchableSpells();
 }
 
 export async function getSpellHeavyDetails(rowid: number): Promise<SpellHeavyDetails | null> {

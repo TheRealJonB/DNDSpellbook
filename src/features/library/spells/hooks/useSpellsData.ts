@@ -1,7 +1,7 @@
 // src/features/library/shared/hooks/useLibraryData.ts
 import { useEffect, useState } from 'react';
-import { getAllLightSpells, initializeSpells } from '../../spells/services/spellSyncService';
-import { LightSpell } from '../models/fiveE/Spell';
+import { getAllSearchableSpells, initializeSpells } from '../../spells/services/spellSyncService';
+import { SearchableSpell } from '../models/fiveE/Spell';
 
 export function useInitializeSpellTable() {
     const [isLibraryReady, setIsLibraryReady] = useState(false);
@@ -29,31 +29,31 @@ export function useInitializeSpellTable() {
 }
 
 export function useSpellsData() {
-    const [lightSpells, setLightSpells] = useState<LightSpell[]>([]);
-    const [isLightSpellsLoading, setIsLightSpellsLoading] = useState(true);
+    const [lightSpells, setSearchableSpells] = useState<SearchableSpell[]>([]);
+    const [isSearchableSpellsLoading, setIsSearchableSpellsLoading] = useState(true);
 
     useEffect(() => {
         let isMounted = true;
 
-        async function fetchLightSpells() {
+        async function fetchSearchableSpells() {
             try {
-                setIsLightSpellsLoading(true);
+                setIsSearchableSpellsLoading(true);
 
-                const loadedSpells = await getAllLightSpells();
+                const loadedSpells = await getAllSearchableSpells();
 
                 if (isMounted) {
-                    setLightSpells(loadedSpells);
-                    setIsLightSpellsLoading(false);
+                    setSearchableSpells(loadedSpells);
+                    setIsSearchableSpellsLoading(false);
                 }
             } catch (error) {
                 console.error("Spell database fetch failure:", error);
-                if (isMounted) setIsLightSpellsLoading(false);
+                if (isMounted) setIsSearchableSpellsLoading(false);
             }
         }
 
-        fetchLightSpells();
+        fetchSearchableSpells();
         return () => { isMounted = false; }; // Prevent memory leak crashes on rapid tab changes
     }, []);
 
-    return { lightSpells, isLightSpellsLoading };
+    return { lightSpells, isSearchableSpellsLoading };
 }
