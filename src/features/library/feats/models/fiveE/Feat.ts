@@ -1,7 +1,5 @@
 import { BaseModel } from "@/src/shared/models/BaseModel";
 
-export type ScrapedFeat = Omit<Feat, 'id'>
-
 export type SearchableFeat = Pick<Feat,
     'id' | 'name' | 'source' | 'prereq' | 'abilityScoreIncreased'>
 
@@ -14,21 +12,23 @@ export interface FeatDBRow extends BaseModel {
     prereq: string;
     ability_score_increased: string;
     features: string;
+    // heavy details
     description: string;
 }
 
 export interface Feat extends BaseModel {
     name: string;
-    source: string;
-    prereq: string;
-    abilityScoreIncreased: string[];
-    features: Feature[];
-    description: string[];
+    source: string | null;
+    prereq: string | null;
+    abilityScoreIncreased: string[] | null;
+    features: Feature[] | null;
+    // heavy details
+    description: string[] | null;
 }
 
 export interface Feature {
-    info: string;
-    table: Table;
+    info: string | null;
+    table: Table | null;
 
 }
 

@@ -1,7 +1,7 @@
 [ {
   "name" : "Padded",
   "armorClass" : "11 + Dex modifier",
-  "strReq" : "-",
+  "strReq" : null,
   "stealth" : "Disadvantage",
   "weight" : "8 lb.",
   "cost" : "5 gp",
@@ -9,39 +9,39 @@
 }, {
   "name" : "Leather",
   "armorClass" : "11 + Dex modifier",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "10 lb.",
   "cost" : "10 gp",
   "armorType" : "Light Armor"
 }, {
   "name" : "Studded Leather",
   "armorClass" : "12 + Dex Modifier",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "13 lb.",
   "cost" : "45 gp",
   "armorType" : "Light Armor"
 }, {
   "name" : "Hide",
   "armorClass" : "12 + Dex modifier (max 2)",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "12 lb.",
   "cost" : "10 gp",
   "armorType" : "Medium Armor"
 }, {
   "name" : "Chain Shirt",
   "armorClass" : "13 + Dex modifier (max 2)",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "20 lb.",
   "cost" : "50 gp",
   "armorType" : "Medium Armor"
 }, {
   "name" : "Scale Mail",
   "armorClass" : "14 + Dex modifier (max 2)",
-  "strReq" : "-",
+  "strReq" : null,
   "stealth" : "Disadvantage",
   "weight" : "45 lb.",
   "cost" : "50 gp",
@@ -49,7 +49,7 @@
 }, {
   "name" : "Spiked Armor",
   "armorClass" : "14 + Dex modifier (max 2)",
-  "strReq" : "-",
+  "strReq" : null,
   "stealth" : "Disadvantage",
   "weight" : "45 lb.",
   "cost" : "75 gp",
@@ -57,15 +57,15 @@
 }, {
   "name" : "Breastplate",
   "armorClass" : "14 + Dex modifier (max 2)",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "20 lb.",
   "cost" : "400 gp",
   "armorType" : "Medium Armor"
 }, {
   "name" : "Halfplate",
   "armorClass" : "15 + Dex modifier (max 2)",
-  "strReq" : "-",
+  "strReq" : null,
   "stealth" : "Disadvantage",
   "weight" : "40 lb.",
   "cost" : "750 gp",
@@ -73,7 +73,7 @@
 }, {
   "name" : "Ring Mail",
   "armorClass" : "14",
-  "strReq" : "-",
+  "strReq" : null,
   "stealth" : "Disadvantage",
   "weight" : "40 lb.",
   "cost" : "30 gp",
@@ -105,8 +105,8 @@
 }, {
   "name" : "Shield",
   "armorClass" : "+2",
-  "strReq" : "-",
-  "stealth" : "-",
+  "strReq" : null,
+  "stealth" : null,
   "weight" : "6 lb.",
   "cost" : "10 gp",
   "armorType" : "Shield"

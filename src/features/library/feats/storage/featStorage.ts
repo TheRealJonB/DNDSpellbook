@@ -1,5 +1,5 @@
 import { getDatabase } from '@/src/shared/storage/storageClient';
-import { Feat, FeatDBRow, FeatHeavyDetails, ScrapedFeat, SearchableFeat } from '../models/fiveE/Feat';
+import { Feat, FeatDBRow, FeatHeavyDetails, SearchableFeat } from '../models/fiveE/Feat';
 
 export async function initFeatTable(): Promise<void> {
   const db = await getDatabase();
@@ -22,14 +22,14 @@ export async function initFeatTable(): Promise<void> {
   `);
 }
 
-export async function saveFeats(feats: ScrapedFeat[]): Promise<void> {
+export async function saveFeats(feats: Feat[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const feat of feats) {
       // 1. Insert core feats attributes
       const result = await db.runAsync(
         `INSERT OR REPLACE INTO feats (
-          id, name, source, prereq, ability_score_increased, features_json, description_json
+          name, source, prereq, ability_score_increased, features_json, description_json
         ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           feat.name,
@@ -68,11 +68,11 @@ export async function loadSearchableFeats(): Promise<SearchableFeat[]> {
   });
 }
 
-export async function loadSpellHeavyDetails(id: number): Promise<FeatHeavyDetails | null> {
+export async function loadFeatHeavyDetails(id: number): Promise<FeatHeavyDetails | null> {
   const db = await getDatabase();
   const spellHeavyDetails = await db.getFirstAsync<FeatHeavyDetails>(
-    `SELECT casting_time AS castingTime, description, upgrade, components 
-     FROM spells 
+    `SELECT description 
+     FROM feats 
      WHERE id = ?`,
     [id]
   );
@@ -100,13 +100,13 @@ export async function loadFullFeat(id: number): Promise<Feat | null> {
   };
 }
 
-export async function getSpellCount(): Promise<number> {
+export async function getFeatCount(): Promise<number> {
   const db = await getDatabase();
-  const result = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM spells');
+  const result = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM feats');
   return result?.count ?? 0;
 }
 
-export async function getSpellDataVersion(): Promise<number> {
+export async function getFeatDataVersion(): Promise<number> {
   const db = await getDatabase();
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS app_meta (
@@ -114,11 +114,11 @@ export async function getSpellDataVersion(): Promise<number> {
       value TEXT NOT NULL
     );
   `);
-  const row = await db.getFirstAsync<{ value: string }>('SELECT value FROM app_meta WHERE key = ?', ['spell_data_version']);
+  const row = await db.getFirstAsync<{ value: string }>('SELECT value FROM app_meta WHERE key = ?', ['feat_data_version']);
   return row ? parseInt(row.value) : 0;
 }
 
-export async function setSpellDataVersion(version: number): Promise<void> {
+export async function setFeatDataVersion(version: number): Promise<void> {
   const db = await getDatabase();
-  await db.runAsync('INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)', ['spell_data_version', version.toString()]);
+  await db.runAsync('INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)', ['feat_data_version', version.toString()]);
 }
