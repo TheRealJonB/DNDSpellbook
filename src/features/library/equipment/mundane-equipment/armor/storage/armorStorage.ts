@@ -64,9 +64,7 @@ export async function loadArmorAll(): Promise<Armor[]> {
 
   // Load core table items
   const rows = await db.getAllAsync<ArmorDBRow>(`
-    SELECT 
-      id, name, armor_class, str_req, stealth, weight, cost, armor_type
-    FROM armor
+    SELECT * FROM armor
   `);
 
   return rows.map(row => {

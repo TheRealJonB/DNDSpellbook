@@ -1,0 +1,21 @@
+[ {
+  "name" : "Arrows (20)",
+  "amount" : 0,
+  "cost" : "1 gp",
+  "weight" : "1 lb."
+}, {
+  "name" : "Blowgun needles (50)",
+  "amount" : 0,
+  "cost" : "1 gp",
+  "weight" : "1 lb."
+}, {
+  "name" : "Crossbow bolts (20)",
+  "amount" : 0,
+  "cost" : "1 gp",
+  "weight" : "1½ lb."
+}, {
+  "name" : "Sling bullets (20)",
+  "amount" : 0,
+  "cost" : "4 cp",
+  "weight" : "1½ lb."
+} ]
