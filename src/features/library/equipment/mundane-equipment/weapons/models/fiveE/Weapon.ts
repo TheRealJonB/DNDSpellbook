@@ -2,20 +2,20 @@ import { BaseModel } from "@/src/shared/models/BaseModel";
 
 export interface WeaponDBRow extends BaseModel {
     name: string;
-    cost: string;
+    cost: number;
     damage: string;
     weight: string;
     properties: string;
-    martial: boolean;
-    ranged: boolean;
-    money_cost: string;
-    damage_die: string;
+    martial: number;
+    ranged: number;
+    money_cost: number;
+    damage_die: number;
     property_list: string;
 }
 
 export interface Weapon extends BaseModel {
     name: string;
-    cost: string;
+    cost: number;
     damage: string;
     weight: string;
     properties: string;
@@ -28,7 +28,7 @@ export interface Weapon extends BaseModel {
 
 export interface AmmunitionDBRow extends BaseModel {
     name: string;
-    amount: string;
+    amount: number;
     cost: string;
     weight: string;
 }
