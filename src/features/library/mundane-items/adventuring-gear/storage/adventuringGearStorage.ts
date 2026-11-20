@@ -20,7 +20,7 @@ export async function initAdventuringGearTable(): Promise<void> {
   `);
 }
 
-export async function saveAdventuringGear(adventuringGear: AdventuringGearGroup[]): Promise<void> {
+export async function saveAdventuringGear(adventuringGear: Omit<AdventuringGearGroup, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const gear of adventuringGear) {

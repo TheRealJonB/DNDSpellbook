@@ -6,7 +6,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../src/shared/theme/colors';
-import { spacing } from '../../../src/shared/theme/spacing';
+import { radii, spacing } from '../../../src/shared/theme/spacing';
 import { typography } from '../../../src/shared/theme/typography';
 
 
@@ -203,7 +203,7 @@ function Tag({ label }: { label: string }) {
 const styles = StyleSheet.create({
   addButton: {
     borderColor: colors.borderLight,
-    borderRadius: 6,
+    borderRadius: radii.md,
     borderWidth: 0.5,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
@@ -326,7 +326,7 @@ const statRowStyles = StyleSheet.create({
 const tagStyles = StyleSheet.create({
   tag: {
     borderColor: colors.borderLight,
-    borderRadius: 4,
+    borderRadius: radii.sm,
     borderWidth: 0.5,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,

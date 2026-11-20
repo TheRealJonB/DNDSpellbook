@@ -12,11 +12,11 @@ export async function initArmorTable(): Promise<void> {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
       armor_class TEXT,
-      strReq TEXT,
+      str_req TEXT,
       stealth TEXT,
       weight TEXT,
       cost TEXT,
-      armorType TEXT,
+      armor_type TEXT,
 
       search_vector TEXT
     );
@@ -36,7 +36,7 @@ export async function initArmorTable(): Promise<void> {
   `);
 }
 
-export async function saveArmor(armors: Armor[]): Promise<void> {
+export async function saveArmor(armors: Omit<Armor, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const armor of armors) {

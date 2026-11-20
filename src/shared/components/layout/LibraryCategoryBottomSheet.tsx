@@ -1,9 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../theme/colors';
+import { Pressable, Text, View } from 'react-native';
 import { styles } from '../../theme/components/bottomSheetStyles';
-import { spacing } from '../../theme/spacing';
 
 
 interface CategoryItem {
@@ -60,13 +58,13 @@ const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, Lib
             backdropComponent={renderBackdrop}
             topInset={topInset}
             enableDynamicSizing={false}
-        //   backgroundStyle={styles.sheetBackground}
+            backgroundStyle={styles.sheetBackground}
         //   handleIndicatorStyle={styles.indicator}
         >
             <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
                 <Text style={styles.sheetHeader}>{sheetTitle}</Text>
 
-                <View style={categoryStyles.listWrapper}>
+                <View style={styles.optionList}>
                     {/* Dynamically map out the categories */}
                     {categories.map((item) => {
                         const isSelected = item.value === currentCategory;
@@ -75,16 +73,16 @@ const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, Lib
                             <Pressable
                                 key={item.value}
                                 style={({ pressed }) => [
-                                    categoryStyles.categoryRow,
-                                    isSelected && categoryStyles.categoryRowSelected,
-                                    pressed && categoryStyles.categoryRowPressed,
+                                    styles.optionRow,
+                                    isSelected && styles.optionRowSelected,
+                                    pressed && styles.pressablePressed,
                                 ]}
                                 onPress={() => handleSelect(item.value)}
                             >
                                 <Text
                                     style={[
-                                        categoryStyles.categoryText,
-                                        isSelected && categoryStyles.categoryTextSelected,
+                                        styles.optionText,
+                                        isSelected && styles.optionTextSelected,
                                     ]}
                                 >
                                     {item.label}
@@ -100,32 +98,3 @@ const LibraryCategoryBottomSheet = forwardRef<LibraryCategoryBottomSheetRef, Lib
 
 LibraryCategoryBottomSheet.displayName = 'LibraryCategoryBottomSheet';
 export default LibraryCategoryBottomSheet;
-
-const categoryStyles = StyleSheet.create({
-    listWrapper: {
-        gap: spacing.sm,
-    },
-    categoryRow: {
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.lg,
-        borderRadius: 8,
-        backgroundColor: '#2a2a2a',
-        borderWidth: 1,
-        borderColor: '#333',
-    },
-    categoryRowSelected: {
-        backgroundColor: colors.accent,
-        borderColor: colors.accent,
-    },
-    categoryRowPressed: {
-        opacity: 0.7,
-    },
-    categoryText: {
-        fontSize: 16,
-        color: '#ccc',
-    },
-    categoryTextSelected: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-});

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LayoutChangeEvent, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
-import { spacing } from '../../../../shared/theme/spacing';
+import { radii, spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
 
 interface Props {
@@ -22,14 +22,15 @@ export default function SpellListHeader(
 
       <Pressable
         onPress={openCategorySheet}
-        style={[styles.filterButton, filterActive && styles.filterButtonActive]}
+        style={[styles.filterButton]}
       >
         <Ionicons
           name="options-outline"
           size={20}
-          color={filterActive ? colors.accentLight : colors.textMuted}
+          color={colors.accentLight}
+          // color={filterActive ? colors.accentLight : colors.textMuted}
         />
-        {filterActive && <View style={styles.filterDot} />}
+        {/* {filterActive && <View style={styles.filterDot} />} */}
       </Pressable>
 
 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
   },
   backText: {
     color: colors.accentLight,
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
   filterButton: {
     alignItems: 'center',
     borderColor: colors.borderLight,
-    borderRadius: 8,
+    borderRadius: radii.md,
     borderWidth: 0.5,
     height: 40,
     justifyContent: 'center',
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   filterDot: {
     backgroundColor: colors.accentLight,
-    borderRadius: 3,
+    borderRadius: radii.pill,
     bottom: 6,
     height: 6,
     position: 'absolute',
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.borderLight,
-    borderRadius: 8,
+    borderRadius: radii.md,
     borderWidth: 0.5,
     flex: 1,
     flexDirection: 'row',
@@ -122,6 +123,6 @@ const styles = StyleSheet.create({
   searchInput: {
     color: colors.textPrimary,
     flex: 1,
-    fontSize: 15,
+    fontSize: typography.sizes.md,
   },
 });

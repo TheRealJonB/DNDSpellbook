@@ -22,7 +22,16 @@ export async function initWeaponTable(): Promise<void> {
       propertyList TEXT,
       search_vector TEXT
     );
+  `);
+}
 
+export async function initAmmunitionTable(): Promise<void> {
+  const db = await getDatabase();
+
+  // Enable foreign key support inside SQLite explicitly
+  await db.execAsync('PRAGMA foreign_keys = ON;');
+
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS ammunition (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
@@ -30,7 +39,16 @@ export async function initWeaponTable(): Promise<void> {
       cost TEXT,
       weight TEXT
     );
-    
+  `);
+}
+
+export async function initWeaponPropertyTable(): Promise<void> {
+  const db = await getDatabase();
+
+  // Enable foreign key support inside SQLite explicitly
+  await db.execAsync('PRAGMA foreign_keys = ON;');
+
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS weapon_property (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
@@ -39,7 +57,7 @@ export async function initWeaponTable(): Promise<void> {
   `);
 }
 
-export async function saveWeapons(weapons: Weapon[]): Promise<void> {
+export async function saveWeapons(weapons: Omit<Weapon, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const weapon of weapons) {
@@ -65,7 +83,7 @@ export async function saveWeapons(weapons: Weapon[]): Promise<void> {
   });
 }
 
-export async function saveAmmunition(ammunitionList: Ammunition[]): Promise<void> {
+export async function saveAmmunitions(ammunitionList: Omit<Ammunition, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const ammunition of ammunitionList) {
@@ -85,7 +103,7 @@ export async function saveAmmunition(ammunitionList: Ammunition[]): Promise<void
   });
 }
 
-export async function saveWeaponProperty(weaponProperties: WeaponProperty[]): Promise<void> {
+export async function saveWeaponProperties(weaponProperties: Omit<WeaponProperty, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const weaponProperty of weaponProperties) {
@@ -214,7 +232,7 @@ export async function loadWeaponPropertyAll(): Promise<WeaponProperty[]> {
 export async function loadWeaponPropertyById(id: number): Promise<WeaponProperty | null> {
   const db = await getDatabase();
   const row = await db.getFirstAsync<WeaponPropertyDBRow>(
-    `SELECT * FROM weapon WHERE id = ?`,
+    `SELECT * FROM weapon_property WHERE id = ?`,
     [id]
   );
 
@@ -237,6 +255,12 @@ export async function getWeaponCount(): Promise<number> {
 export async function getAmmunitionCount(): Promise<number> {
   const db = await getDatabase();
   const result = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM ammunition');
+  return result?.count ?? 0;
+}
+
+export async function getWeaponPropertyCount(): Promise<number> {
+  const db = await getDatabase();
+  const result = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM weapon_property');
   return result?.count ?? 0;
 }
 
@@ -272,4 +296,21 @@ export async function getAmmunitionDataVersion(): Promise<number> {
 export async function setAmmunitionDataVersion(version: number): Promise<void> {
   const db = await getDatabase();
   await db.runAsync('INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)', ['ammunition_data_version', version.toString()]);
+}
+
+export async function getWeaponPropertyDataVersion(): Promise<number> {
+  const db = await getDatabase();
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS app_meta (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `);
+  const row = await db.getFirstAsync<{ value: string }>('SELECT value FROM app_meta WHERE key = ?', ['weapon_property_data_version']);
+  return row ? parseInt(row.value) : 0;
+}
+
+export async function setWeaponPropertyDataVersion(version: number): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync('INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)', ['weapon_property_data_version', version.toString()]);
 }

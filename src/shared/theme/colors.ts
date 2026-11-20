@@ -2,13 +2,16 @@ export const colors = {
   background: '#0e0e0e',
   surface: '#1a1a1a',
   surfaceRaised: '#242424',
+  surfaceInteractive: '#2a2a2a',
 
   textPrimary: '#f0e6d3',
   textSecondary: '#a89880',
   textMuted: '#6b5e52',
+  textOnAccent: '#f0e6d3',
 
   accent: '#8b6914',
   accentLight: '#c4a052',
+  shadow: '#000000',
 
   school: {
     Abjuration: '#4a7ab5',
@@ -23,6 +26,7 @@ export const colors = {
 
   border: '#2a2a2a',
   borderLight: '#3a3a3a',
+  borderStrong: '#333333',
   chipSelected: '#3d2e0a',
   chipSelectedBorder: '#c4a052',
   error: '#c0392b',

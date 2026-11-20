@@ -15,6 +15,9 @@ import Animated, {
     withSpring,
     withTiming
 } from 'react-native-reanimated';
+import { colors } from '../../../../shared/theme/colors';
+import { radii, spacing } from '../../../../shared/theme/spacing';
+import { typography } from '../../../../shared/theme/typography';
 import { SearchableSpell } from '../models/fiveE/Spell';
 import SpellCard from './SpellCard';
 
@@ -132,8 +135,8 @@ function TabItem({ tabName, index, activeIndexDerived, onPress }: any) {
     const animatedTextStyle = useAnimatedStyle(() => {
         const isSelected = activeIndexDerived.value === index;
         return {
-            color: withTiming(isSelected ? '#007AFF' : '#666', { duration: 200 }),
-            fontWeight: isSelected ? '700' : '500',
+            color: withTiming(isSelected ? colors.accentLight : colors.textMuted, { duration: 200 }),
+            fontWeight: isSelected ? typography.weights.bold : typography.weights.medium,
         };
     });
 
@@ -153,26 +156,25 @@ const styles = StyleSheet.create({
     tabBarContainer: {
         position: 'relative',
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        // backgroundColor: '#fff',
+        borderBottomColor: colors.border,
     },
     tabBar: {
         flexDirection: 'row',
     },
     tabItem: {
         flex: 1,
-        paddingVertical: 14,
+        paddingVertical: spacing.md,
         alignItems: 'center',
         justifyContent: 'center',
     },
     tabText: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#666',
+        fontSize: typography.sizes.sm,
+        fontWeight: typography.weights.medium,
+        color: colors.textMuted,
     },
     activeTabText: {
-        color: '#007AFF',
-        fontWeight: '700',
+        color: colors.accentLight,
+        fontWeight: typography.weights.bold,
     },
     // activeTabItem: {
     //     borderBottomWidth: 3,
@@ -191,8 +193,8 @@ const styles = StyleSheet.create({
         left: 0,
         height: 3,
         width: TAB_WIDTH,
-        backgroundColor: '#007AFF',
-        borderRadius: 3,
+        backgroundColor: colors.accentLight,
+        borderRadius: radii.pill,
     },
     //   tabText: { 
     //     color: '#666', fontWeight: '600', fontSize: 13
@@ -203,16 +205,5 @@ const styles = StyleSheet.create({
     page: {
         width: SCREEN_WIDTH,
         flex: 1
-    },
-    spellCard: {
-        backgroundColor: '#fff',
-        padding: 20,
-        marginBottom: 12,
-        borderRadius: 8,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41
     },
 });

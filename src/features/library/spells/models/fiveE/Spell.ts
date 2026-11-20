@@ -10,8 +10,6 @@ export type SearchableSpell = Pick<Spell,
 
 export type SpellHeavyDetails = Pick<Spell, keyof SearchableSpell>
 
-export type ScrapedSpell = Omit<Spell, 'id'>
-
 export interface Spell extends BaseModel {
     // SearchableSpell info
     name: string;

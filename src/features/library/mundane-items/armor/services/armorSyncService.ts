@@ -4,7 +4,7 @@ import { getArmorCount, getArmorDataVersion, initArmorTable, loadArmorAll, loadA
 
 const ARMOR_DATA_VERSION = 1;
 
-export async function initializeAdventuringGear() {
+export async function initializeArmor() {
   await initArmorTable();
 
   const count = await getArmorCount();
@@ -12,7 +12,7 @@ export async function initializeAdventuringGear() {
 
   if (count === 0 || storedVersion < ARMOR_DATA_VERSION) {
     // console.log('Seeding adventuring gear from JSON...');
-    await saveArmor(armorData as Armor[]);
+    await saveArmor(armorData as Omit<Armor, 'id'>[]);
     await setArmorDataVersion(ARMOR_DATA_VERSION);
     // console.log('Adventuring Gear in database after seed:', await getArmorCount());
     // console.log('Seeding complete');

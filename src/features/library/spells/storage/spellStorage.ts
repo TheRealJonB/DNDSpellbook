@@ -1,5 +1,5 @@
 import { getDatabase } from '@/src/shared/storage/storageClient';
-import { ScrapedSpell, SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
+import { SearchableSpell, Spell, SpellHeavyDetails } from '../models/fiveE/Spell';
 
 export async function initSpellTable(): Promise<void> {
   const db = await getDatabase();
@@ -60,7 +60,7 @@ export async function initSpellTable(): Promise<void> {
   `);
 }
 
-export async function saveSpells(spells: ScrapedSpell[]): Promise<void> {
+export async function saveSpells(spells: Omit<Spell, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const spell of spells) {

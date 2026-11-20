@@ -2,8 +2,9 @@ import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, Bottom
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../../theme/components/bottomSheetStyles';
+import { shadows } from '../../theme/shadows';
+import { spacing } from '../../theme/spacing';
 import { FilterCategory } from '../../utils/filters';
-
 
 
 interface FilterBottomSheetProps {
@@ -21,22 +22,39 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
     const bottomSheetRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['100%'], []);
 
-
     const [localFilters, setLocalFilters] = useState<FilterCategory[]>(filters);
     useEffect(() => {
         setLocalFilters(filters);
     }, [filters]);
     const handleToggleOption = (filterCategoryId: string, filterOptionId: string) => {
-        const updated = localFilters.map(filterCategory => {
-            if (filterCategory.id !== filterCategoryId) return filterCategory;
+        const matchedCategory = localFilters.find((category) => category.id === filterCategoryId);
+        const filterOption = matchedCategory?.filterOptions.find((option) => option.id === filterOptionId);
+
+        if (!matchedCategory || !filterOption) {
+            if (__DEV__) console.warn('[FilterBottomSheet] Cannot toggle an unknown filter option.', {
+                filterCategoryId,
+                filterOptionId,
+            });
+            return;
+        }
+
+        const updated = localFilters.map(category => {
+            if (category.id !== filterCategoryId) return category;
             return {
-                ...filterCategory,
-                filterOptionId: filterCategory.filterOptions.map(opt =>
+                ...category,
+                filterOptions: category.filterOptions.map(opt =>
                     opt.id === filterOptionId ? { ...opt, isSelected: !opt.isSelected } : opt
                 )
             };
         });
         setLocalFilters(updated);
+        if (__DEV__) {
+            console.log('[FilterBottomSheet] Toggled filter option.', {
+                category: matchedCategory.title,
+                option: filterOption.label,
+                isSelected: !filterOption.isSelected,
+            });
+        }
     }
     const handleClearFilters = () => {
         const updated = localFilters.map(filterCategory => {
@@ -49,7 +67,19 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
             };
         })
         setLocalFilters(updated);
+        if (__DEV__) console.log('[FilterBottomSheet] Cleared all local filters.');
     }
+
+    const handleApplyFilters = () => {
+        const selectedFilters = localFilters.flatMap((category) =>
+            category.filterOptions
+                .filter((option) => option.isSelected)
+                .map((option) => ({ category: category.id, option: option.label }))
+        );
+        if (__DEV__) console.log('[FilterBottomSheet] Applying filters.', { selectedFilters });
+        onApplyFilters(localFilters);
+        bottomSheetRef.current?.close();
+    };
 
     const renderBackdrop = useCallback(
         (props: BottomSheetBackdropProps) => (
@@ -76,6 +106,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
             index={0}
             snapPoints={snapPoints}
             backdropComponent={renderBackdrop}
+            backgroundStyle={styles.sheetBackground}
             topInset={topInset}
             enableDynamicSizing={false}
             enablePanDownToClose={true}
@@ -97,28 +128,28 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                 contentContainerStyle={styles.scrollContent}
             >
                 {/* 4. Dynamically loop over whatever filter groups are passed in */}
-                {localFilters.map((group) => (
-                    <View key={group.id} style={styles.section}>
-                        <Text style={styles.sectionTitle}>{group.title}</Text>
+                {localFilters.map((filterCategory) => (
+                    <View key={filterCategory.id} style={styles.section}>
+                        <Text style={styles.sectionTitle}>{filterCategory.title}</Text>
 
-                        <View style={styles.chipRow}>
+                        <View style={styles.optionList}>
                             {/* Dynamically loop over changing filterOption items inside this specific group */}
-                            {group.filterOptions.map((filterOption) => (
+                            {filterCategory.filterOptions.map((filterOption) => (
                                 /* 2. Swapped to Pressable with a dynamic style function */
                                 <Pressable
                                     key={filterOption.id}
                                     hitSlop={8} // Makes small chips easier to tap
                                     style={({ pressed }) => [
-                                        styles.chip,
-                                        filterOption.isSelected && styles.chipSelected,
-                                        pressed && styles.filterOptionChipPressed, // Custom active feedback
+                                        styles.optionRow,
+                                        filterOption.isSelected && styles.optionRowSelected,
+                                        pressed && styles.pressablePressed,
                                     ]}
-                                    onPress={() => handleToggleOption(group.id, filterOption.id)}
+                                    onPress={() => handleToggleOption(filterCategory.id, filterOption.id)}
                                 >
                                     <Text
                                         style={[
-                                            styles.chipText,
-                                            filterOption.isSelected && styles.chipSelectedText,
+                                            styles.optionText,
+                                            filterOption.isSelected && styles.optionTextSelected,
                                         ]}
                                     >
                                         {filterOption.label}
@@ -139,13 +170,10 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                 <Pressable
                     style={({ pressed }) => [
                         styles.applyButton,
-                        pressed && styles.applyButtonPressed,
+                        pressed && styles.pressablePressed,
                         localFloatingStyles.shadowEffect
                     ]}
-                    onPress={() => {
-                        onApplyFilters(localFilters);
-                        bottomSheetRef.current?.close();
-                    }}
+                    onPress={handleApplyFilters}
                 >
                     <Text style={styles.applyFilters}>Apply Filters</Text>
                 </Pressable>
@@ -175,16 +203,11 @@ const localFloatingStyles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        paddingHorizontal: 24,
+        paddingHorizontal: spacing.xl,
         paddingBottom: 100, // Adds padding for the phone's physical bottom indicator bar
         backgroundColor: 'transparent', // Keeps background transparent so content scrolls underneath visually
     },
     shadowEffect: {
-        // Elevates the floating pill card visually over your scrolling chips
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
-        elevation: 8, // Required for shadow depth handling on Android devices
+        ...shadows.floating,
     }
 });

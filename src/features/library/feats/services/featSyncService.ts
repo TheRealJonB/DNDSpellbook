@@ -12,7 +12,7 @@ export async function initializeFeats() {
 
   if (count === 0 || storedVersion < FEAT_DATA_VERSION) {
     // console.log('Seeding feats from JSON...');
-    await saveFeats(featData as Feat[]);
+    await saveFeats(featData as Omit<Feat, 'id'>[]);
     await setFeatDataVersion(FEAT_DATA_VERSION);
     // console.log('Feats in database after seed:', await getFeatCount());
     // console.log('Seeding complete');

@@ -22,7 +22,7 @@ export async function initFeatTable(): Promise<void> {
   `);
 }
 
-export async function saveFeats(feats: Feat[]): Promise<void> {
+export async function saveFeats(feats: Omit<Feat, 'id'>[]): Promise<void> {
   const db = await getDatabase();
   await db.withTransactionAsync(async () => {
     for (const feat of feats) {

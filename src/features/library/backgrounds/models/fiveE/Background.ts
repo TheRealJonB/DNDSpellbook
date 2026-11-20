@@ -1,8 +1,28 @@
 import { BaseModel } from "@/src/shared/models/BaseModel";
 
+export interface BackgroundDBRow extends BaseModel {
+    name: string;
+    description: string | null;
+    source: string | null;
+
+    skills: string | null;
+    tools: string | null;
+    lang: string | null;
+    equip: string | null;
+    skillProficiencies: string | null;
+    toolProficiencies: string | null;
+    languages: string | null;
+    equipment: string | null;
+
+    variants: string | null;
+    features: string | null;
+
+    suggestedCharacteristics: string | null;
+}
+
 export interface Background extends BaseModel {
     name: string;
-    description: string;
+    description: string[];
     source: string;
 
     skills: string;
@@ -21,33 +41,33 @@ export interface Background extends BaseModel {
 }
 
 export interface Choices {
-    fixed: string[];
-    chooseCount: number[];
-    chooseFrom: string[][];
+    fixed: string[] | null;
+    chooseCount: number[] | null;
+    chooseFrom: string[][] | null;
 
-    table: Table;
+    table: Table | null;
 }
 
 export interface Feature {
-    name: string;
-    description: string[];
+    name: string | null;
+    description: string[] | null;
 
-    table: Table;
+    table: Table | null;
 }
 
 export interface SuggestedCharacteristics {
-    reference: string;
-    description: string[];
-    referencedDescription: string[];
+    reference: string | null;
+    description: string[] | null;
+    referencedDescription: string[] | null;
 
-    personalityTraits: Table;
-    ideals: Table;
-    bonds: Table;
-    flaws: Table;
+    personalityTraits: Table | null;
+    ideals: Table | null;
+    bonds: Table | null;
+    flaws: Table | null;
 }
 
 export interface Table {
-    header: string[];
-    entries: string[][];
+    header: string[] | null;
+    entries: string[][] | null;
 
 }

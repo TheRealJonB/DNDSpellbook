@@ -1,7 +1,4 @@
 import { BaseModel } from "@/src/shared/models/BaseModel";
-import { Feature } from "@/src/shared/models/Feature";
-
-
 
 export interface Subclass extends BaseModel {
     name: string;

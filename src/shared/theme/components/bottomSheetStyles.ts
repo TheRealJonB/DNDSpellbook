@@ -1,92 +1,60 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '../colors';
-import { spacing } from '../spacing';
+import { radii, spacing } from '../spacing';
 import { typography } from '../typography';
 
 export const styles = StyleSheet.create({
-    sheetHeader: { 
-        fontSize: 22, 
-        fontWeight: 'bold', 
-        marginBottom: 20, 
-        color: '#111' 
+    sheetBackground: {
+        backgroundColor: colors.surface,
     },
-    groupContainer: { 
-        marginBottom: 24 
+    sheetHeader: {
+        color: colors.textPrimary,
+        fontSize: typography.sizes.xxl,
+        fontWeight: typography.weights.bold,
+        marginBottom: spacing.lg,
     },
-    groupTitle: { 
-        fontSize: 16, 
-        fontWeight: '600', 
-        color: '#666', 
-        marginBottom: 12, 
-        textTransform: 'uppercase' 
+    optionList: {
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: spacing.sm,
     },
-    filterOptionsWrapper: { 
-        flexDirection: 'row', 
-        flexWrap: 'wrap', 
-        gap: 8 
-    },
-
-    // Chip Styles
-    filterOptionChip: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#f0f0f0',
+    optionRow: {
+        alignSelf: 'flex-start',
+        maxWidth: '100%',
+        backgroundColor: colors.surfaceInteractive,
+        borderColor: colors.borderStrong,
+        borderRadius: radii.md,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
     },
-    filterOptionChipPressed: {
-        opacity: 0.7, // Replicating a slight fade, or you could do scale/color shifts
+    optionRowSelected: {
+        backgroundColor: colors.accent,
+        borderColor: colors.accent,
     },
-
-    // Footer Button Styles
-    footerButtons: { 
-        marginTop: 16 
+    optionText: {
+        color: colors.textSecondary,
+        fontSize: typography.sizes.sm,
     },
-    applyButtonPressed: {
-        backgroundColor: '#0056b3', // Darkens the button slightly when actively pressed
+    optionTextSelected: {
+        color: colors.textOnAccent,
+        fontWeight: typography.weights.bold,
     },
-
-    
+    pressablePressed: {
+        opacity: 0.7,
+    },
 
     applyButton: {
         alignItems: 'center',
         backgroundColor: colors.accent,
-        borderRadius: 8,
+        borderRadius: radii.md,
         paddingVertical: spacing.md,
     },
     applyFilters: {
         color: colors.textPrimary,
         fontSize: typography.sizes.lg,
         fontWeight: typography.weights.bold,
-    },
-    chip: {
-        borderColor: colors.borderLight,
-        borderRadius: 20,
-        borderWidth: 0.5,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-    },
-    chipRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: spacing.sm,
-    },
-    chipSelected: {
-        backgroundColor: colors.chipSelected,
-        borderColor: colors.chipSelectedBorder,
-        borderRadius: 20,
-        borderWidth: 0.5,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-    },
-    chipSelectedText: {
-        color: colors.accentLight,
-        fontSize: typography.sizes.sm,
-    },
-    chipText: {
-        color: colors.textMuted,
-        fontSize: typography.sizes.sm,
     },
     clearText: {
         color: colors.accentLight,

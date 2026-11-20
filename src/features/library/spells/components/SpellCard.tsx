@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../../shared/theme/colors';
-import { spacing } from '../../../../shared/theme/spacing';
+import { radii, spacing } from '../../../../shared/theme/spacing';
 import { typography } from '../../../../shared/theme/typography';
 import { SearchableSpell } from '../models/fiveE/Spell';
 
@@ -65,18 +65,18 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   schoolBar: {
-    borderRadius: 2,
+    borderRadius: radii.xs,
     height: '80%',
     width: 3,
   },
   tag: {
     borderColor: colors.borderLight,
-    borderRadius: 4,
+    borderRadius: radii.sm,
     borderWidth: 0.5,
     color: colors.textMuted,
     fontSize: typography.sizes.xs,
     paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
+    paddingVertical: spacing.xxs,
   },
   tags: {
     flexDirection: 'row',

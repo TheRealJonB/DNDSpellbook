@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppProviders from '../src/shared/components/layout/AppProviders';
+import { colors } from '../src/shared/theme/colors';
 
 export default function RootLayout() {
   const { isLibraryReady } = useInitializeSpellTable();
@@ -19,7 +20,7 @@ export default function RootLayout() {
           // make this loading spinner better
           <View style={StyleSheet.absoluteFill}>
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#0000ff" />
+              <ActivityIndicator size="large" color={colors.accentLight} />
             </View>
           </View>
 
@@ -33,7 +34,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#ffffff', // Blocks the user from seeing or clicking uninitialized tabs
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },

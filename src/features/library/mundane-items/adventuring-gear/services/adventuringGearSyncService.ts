@@ -12,7 +12,7 @@ export async function initializeAdventuringGear() {
 
   if (count === 0 || storedVersion < ADVENTURING_GEAR_DATA_VERSION) {
     // console.log('Seeding adventuring gear from JSON...');
-    await saveAdventuringGear(adventuringGearData as AdventuringGearGroup[]);
+    await saveAdventuringGear(adventuringGearData as Omit<AdventuringGearGroup, 'id'>[]);
     await setAdventuringGearDataVersion(ADVENTURING_GEAR_DATA_VERSION);
     // console.log('Adventuring Gear in database after seed:', await getAdventuringGearCount());
     // console.log('Seeding complete');
